@@ -23,6 +23,7 @@
 
 ### [University of Chicago](https://www.uchicago.edu/)
 
+- menu bar looks good, it contains a small description of every item and image(if required) when howered along side its links.
 - image sliders are simple and nice
 - clear navigation
 
