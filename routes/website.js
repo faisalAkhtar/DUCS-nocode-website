@@ -11,15 +11,19 @@ async function getStructure() {
 	try {
 		var db = client.db('DUCS')
 		var collection = db.collection('structure')
-		let result = await collection.find().toArray()
-		let menuMarkup = "\n<ul>"
+		let result = await collection.find().sort({ "order": 1 }).toArray()
+		let menuMarkup = ""
+		menuMarkup += "\n<div id='headermenu'>"
+		menuMarkup += "\n<a id='menu-toggle' class='button dark' href='javscript:void(0)'><i class='icon-reorder'></i></a>"
+		menuMarkup += "\n<nav id='navigation'>"
+		menuMarkup += "\n<ul id='main-menu'>"
 		result.forEach(levelOneItem => {
 			if (levelOneItem.type == "menu") {
-				menuMarkup += "<li>\n<div>" + levelOneItem.name + "</div>"
-				menuMarkup += "\n<ul>"
+				menuMarkup += "<li class='parent'>\n<a href='javascript:void(0)'>" + levelOneItem.name + "</a>"
+				menuMarkup += "\n<ul class='sub-menu'>"
 				levelOneItem.items.forEach(levelTwoItem => {
 					if (levelTwoItem.type == "menu") {
-						menuMarkup += "<li>\n<div>" + levelTwoItem.name + "</div>"
+						menuMarkup += "<li>\n<a href='javascript:void(0)'>" + levelTwoItem.name + "</a>"
 						menuMarkup += "\n<ul>"
 						levelTwoItem.items.forEach(levelThreeItem => {
 							menuMarkup += "<li><a href='/" + levelOneItem.link + "/" + levelTwoItem.link + "/" + levelThreeItem.link + "'>" + levelThreeItem.name + "</a></li>"
@@ -34,7 +38,9 @@ async function getStructure() {
 				menuMarkup += "<li><a href='/" + levelOneItem.link + "'>" + levelOneItem.name + "</a></li>"
 			}
 		})
-		menuMarkup += "</ul>\n"
+		menuMarkup += "\n</ul>"
+		menuMarkup += "\n</nav>"
+		menuMarkup += "\n</div>\n"
 
 		return menuMarkup
 	} catch (err) {
