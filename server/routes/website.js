@@ -1,8 +1,40 @@
 var express = require('express')
 var router = express.Router()
-var fs = require("fs")
-var path = require('path')
 var MongoClient = require('mongodb').MongoClient
+
+async function getHead() {
+	const client = await MongoClient.connect('mongodb://localhost:27017/DUCS').catch(err => { throw err })
+	if (!client) return
+
+	try {
+		var db = client.db('DUCS')
+		var collection = db.collection('structure')
+		let result = await collection.find({ "type": "util", "name": "head" }, { "_id": 0, "content": 1 }).toArray()
+		return result[0].content
+	} catch (err) {
+		console.error(err)
+		return ""
+	} finally {
+		client.close()
+	}
+}
+
+async function getHeader() {
+	const client = await MongoClient.connect('mongodb://localhost:27017/DUCS').catch(err => { throw err })
+	if (!client) return
+
+	try {
+		var db = client.db('DUCS')
+		var collection = db.collection('structure')
+		let result = await collection.find({ "type": "util", "name": "header" }, { "_id": 0, "content": 1 }).toArray()
+		return result[0].content
+	} catch (err) {
+		console.error(err)
+		return ""
+	} finally {
+		client.close()
+	}
+}
 
 async function getStructure() {
 	const client = await MongoClient.connect('mongodb://localhost:27017/DUCS').catch(err => { throw err })
@@ -45,24 +77,64 @@ async function getStructure() {
 		return menuMarkup
 	} catch (err) {
 		console.error(err)
+		return ""
 	} finally {
 		client.close()
 	}
 }
 
-async function processPage(directory, pagename) {
-	var head = fs.readFileSync(path.join(__dirname + '/../pages/utils/') + 'head.html', 'utf-8').toString()
-	var header = fs.readFileSync(path.join(__dirname + '/../pages/utils/') + 'header.html', 'utf-8').toString()
-	var menu = await getStructure()
-	var page = fs.readFileSync(path.join(__dirname + '/../pages' + directory) + pagename, 'utf-8').toString()
-	var footer = fs.readFileSync(path.join(__dirname + '/../pages/utils/') + 'footer.html', 'utf-8').toString()
-	var tail = fs.readFileSync(path.join(__dirname + '/../pages/utils/') + 'tail.html', 'utf-8').toString()
+async function getFooter() {
+	const client = await MongoClient.connect('mongodb://localhost:27017/DUCS').catch(err => { throw err })
+	if (!client) return
 
-	return head + header + menu + page + footer + tail
+	try {
+		var db = client.db('DUCS')
+		var collection = db.collection('structure')
+		let result = await collection.find({ "type": "util", "name": "footer" }, { "_id": 0, "content": 1 }).toArray()
+		return result[0].content
+	} catch (err) {
+		console.error(err)
+		return ""
+	} finally {
+		client.close()
+	}
 }
 
-router.get('/', async function (req, res, next) {
-	res.send(await processPage('/', 'home.html'))
+async function getTail() {
+	const client = await MongoClient.connect('mongodb://localhost:27017/DUCS').catch(err => { throw err })
+	if (!client) return
+
+	try {
+		var db = client.db('DUCS')
+		var collection = db.collection('structure')
+		let result = await collection.find({ "type": "util", "name": "tail" }, { "_id": 0, "content": 1 }).toArray()
+		return result[0].content
+	} catch (err) {
+		console.error(err)
+		return ""
+	} finally {
+		client.close()
+	}
+}
+
+router.get('/head', async function (req, res, next) {
+	res.send(await getHead())
+})
+
+router.get('/header', async function (req, res, next) {
+	res.send(await getHeader())
+})
+
+router.get('/menu', async function (req, res, next) {
+	res.send(await getStructure())
+})
+
+router.get('/footer', async function (req, res, next) {
+	res.send(await getFooter())
+})
+
+router.get('/tail', async function (req, res, next) {
+	res.send(await getTail())
 })
 
 module.exports = router
