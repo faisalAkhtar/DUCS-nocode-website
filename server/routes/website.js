@@ -2,43 +2,27 @@ var express = require('express')
 var router = express.Router()
 var MongoClient = require('mongodb').MongoClient
 
-async function getHead() {
+router.get('/header', async function (req, res, next) {
 	const client = await MongoClient.connect('mongodb://localhost:27017/DUCS').catch(err => { throw err })
-	if (!client) return
-
-	try {
-		var db = client.db('DUCS')
-		var collection = db.collection('structure')
-		let result = await collection.find({ "type": "util", "name": "head" }, { "_id": 0, "content": 1 }).toArray()
-		return result[0].content
-	} catch (err) {
-		console.error(err)
-		return ""
-	} finally {
-		client.close()
-	}
-}
-
-async function getHeader() {
-	const client = await MongoClient.connect('mongodb://localhost:27017/DUCS').catch(err => { throw err })
-	if (!client) return
+	if (!client) res.status(500).json({ "msg": "Mongo connection error!" })
 
 	try {
 		var db = client.db('DUCS')
 		var collection = db.collection('structure')
 		let result = await collection.find({ "type": "util", "name": "header" }, { "_id": 0, "content": 1 }).toArray()
-		return result[0].content
+		res.status(200).send(result[0].content)
 	} catch (err) {
 		console.error(err)
-		return ""
+		res.write(result[0].content)
+		res.status(500).json({ "msg": err })
 	} finally {
 		client.close()
 	}
-}
+})
 
-async function getStructure() {
+router.get('/menu', async function (req, res, next) {
 	const client = await MongoClient.connect('mongodb://localhost:27017/DUCS').catch(err => { throw err })
-	if (!client) return
+	if (!client) res.status(500).json({ "msg": "Mongo connection error!" })
 
 	try {
 		var db = client.db('DUCS')
@@ -74,67 +58,30 @@ async function getStructure() {
 		menuMarkup += "\n</nav>"
 		menuMarkup += "\n</div>\n"
 
-		return menuMarkup
+		res.status(200).send(menuMarkup)
 	} catch (err) {
 		console.error(err)
-		return ""
+		res.status(500).json({ "msg": err })
 	} finally {
 		client.close()
 	}
-}
+})
 
-async function getFooter() {
+router.get('/footer', async function (req, res, next) {
 	const client = await MongoClient.connect('mongodb://localhost:27017/DUCS').catch(err => { throw err })
-	if (!client) return
+	if (!client) res.status(500).json({ "msg": "Mongo connection error!" })
 
 	try {
 		var db = client.db('DUCS')
 		var collection = db.collection('structure')
 		let result = await collection.find({ "type": "util", "name": "footer" }, { "_id": 0, "content": 1 }).toArray()
-		return result[0].content
+		res.status(200).send(result[0].content)
 	} catch (err) {
 		console.error(err)
-		return ""
+		res.status(500).json({ "msg": err })
 	} finally {
 		client.close()
 	}
-}
-
-async function getTail() {
-	const client = await MongoClient.connect('mongodb://localhost:27017/DUCS').catch(err => { throw err })
-	if (!client) return
-
-	try {
-		var db = client.db('DUCS')
-		var collection = db.collection('structure')
-		let result = await collection.find({ "type": "util", "name": "tail" }, { "_id": 0, "content": 1 }).toArray()
-		return result[0].content
-	} catch (err) {
-		console.error(err)
-		return ""
-	} finally {
-		client.close()
-	}
-}
-
-router.get('/head', async function (req, res, next) {
-	res.send(await getHead())
-})
-
-router.get('/header', async function (req, res, next) {
-	res.send(await getHeader())
-})
-
-router.get('/menu', async function (req, res, next) {
-	res.send(await getStructure())
-})
-
-router.get('/footer', async function (req, res, next) {
-	res.send(await getFooter())
-})
-
-router.get('/tail', async function (req, res, next) {
-	res.send(await getTail())
 })
 
 module.exports = router
