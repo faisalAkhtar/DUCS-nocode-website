@@ -9,24 +9,28 @@
                 "type": "page",
                 "name": "HOD Message",
                 "link": "hod",
+                "content": "<h1>HOD Message</h1>",
                 "order": 1
             },
             {
                 "type": "page",
                 "name": "Faculty",
                 "link": "faculty",
+                "content": "<h1>Faculty</h1>",
                 "order": 2
             },
             {
                 "type": "page",
                 "name": "Staff",
                 "link": "staff",
+                "content": "<h1>Staff</h1>",
                 "order": 3
             },
             {
                 "type": "page",
                 "name": "Infrastructure",
                 "link": "infra",
+                "content": "<h1>Infrastructure</h1>",
                 "order": 4
             }
         ]
@@ -41,18 +45,21 @@
                 "type": "page",
                 "name": "Ph.D. Computer Science",
                 "link": "phd",
+                "content": "<h1>Ph.D. Computer Science</h1>",
                 "order": 1
             },
             {
                 "type": "page",
                 "name": "MCA",
                 "link": "mca",
+                "content": "<h1>MCA</h1>",
                 "order": 2
             },
             {
                 "type": "page",
                 "name": "M.Sc. Computer Science",
                 "link": "msc",
+                "content": "<h1>M.Sc. Computer Science</h1>",
                 "order": 3
             }
         ]
@@ -67,18 +74,21 @@
                 "type": "page",
                 "name": "PHD Computer Science",
                 "link": "phd",
+                "content": "<h1>PHD Computer Science</h1>",
                 "order": 1
             },
             {
                 "type": "page",
                 "name": "M.Sc. Computer Science",
                 "link": "msc",
+                "content": "<h1>M.Sc. Computer Science</h1>",
                 "order": 2
             },
             {
                 "type": "page",
                 "name": "MCA",
                 "link": "mca",
+                "content": "<h1>MCA</h1>",
                 "order": 3
             },
             {
@@ -89,14 +99,16 @@
                 "items": [
                     {
                         "type": "page",
-                        "name": "june 2021",
+                        "name": "June 2021",
                         "link": "june2021",
+                        "content": "<h1>June 2021</h1>",
                         "order": 1
                     },
                     {
                         "type": "page",
-                        "name": "june 2020",
+                        "name": "June 2020",
                         "link": "june2020",
+                        "content": "<h1>June 2020</h1>",
                         "order": 2
                     }
                 ]
@@ -113,36 +125,42 @@
                 "type": "page",
                 "name": "Ph.D. Computer Science",
                 "link": "phd",
+                "content": "<h1>Ph.D. Computer Science</h1>",
                 "order": 1
             },
             {
                 "type": "page",
                 "name": "MCA",
                 "link": "mca",
+                "content": "<h1>MCA</h1>",
                 "order": 2
             },
             {
                 "type": "page",
                 "name": "M.Sc. Computer Science",
                 "link": "msc",
+                "content": "<h1>M.Sc. Computer Science</h1>",
                 "order": 3
             },
             {
                 "type": "page",
                 "name": "B.Sc. (H) Computer Science",
                 "link": "bsc",
+                "content": "<h1>B.Sc. (H) Computer Science</h1>",
                 "order": 4
             },
             {
                 "type": "page",
                 "name": "UG Programmes Syllabi",
                 "link": "ug-syllabi",
+                "content": "<h1>UG Programmes Syllabi</h1>",
                 "order": 5
             },
             {
                 "type": "page",
                 "name": "Guidelines",
                 "link": "guidelines",
+                "content": "<h1>Guidelines</h1>",
                 "order": 6
             }
         ]
@@ -151,6 +169,7 @@
         "type": "page",
         "name": "Contact Us",
         "link": "contact-us",
+        "content": "<h1>Contact Us</h1>",
         "order": 5
     },
     {
