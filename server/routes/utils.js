@@ -3,8 +3,14 @@ var router = express.Router()
 var MongoClient = require('mongodb').MongoClient
 
 router.get('/header', async function (req, res, next) {
-	const client = await MongoClient.connect('mongodb://localhost:27017/DUCS').catch(err => { throw err })
-	if (!client) res.status(500).json({ "msg": "Mongo connection error!" })
+	const client = await MongoClient.connect('mongodb://localhost:27017/DUCS').catch(err => {
+		res.status(500).json({ "msg": "Mongo connection error!" })
+		throw err
+	})
+	if (!client) {
+		res.status(500).json({ "msg": "Mongo connection error!" })
+		return
+	}
 
 	try {
 		var db = client.db('DUCS')
@@ -13,7 +19,6 @@ router.get('/header', async function (req, res, next) {
 		res.status(200).send(result[0].content)
 	} catch (err) {
 		console.error(err)
-		res.write(result[0].content)
 		res.status(500).json({ "msg": err })
 	} finally {
 		client.close()
@@ -21,8 +26,14 @@ router.get('/header', async function (req, res, next) {
 })
 
 router.get('/menu', async function (req, res, next) {
-	const client = await MongoClient.connect('mongodb://localhost:27017/DUCS').catch(err => { throw err })
-	if (!client) res.status(500).json({ "msg": "Mongo connection error!" })
+	const client = await MongoClient.connect('mongodb://localhost:27017/DUCS').catch(err => {
+		res.status(500).json({ "msg": "Mongo connection error!" })
+		throw err
+	})
+	if (!client) {
+		res.status(500).json({ "msg": "Mongo connection error!" })
+		return
+	}
 
 	try {
 		var db = client.db('DUCS')
@@ -68,8 +79,14 @@ router.get('/menu', async function (req, res, next) {
 })
 
 router.get('/footer', async function (req, res, next) {
-	const client = await MongoClient.connect('mongodb://localhost:27017/DUCS').catch(err => { throw err })
-	if (!client) res.status(500).json({ "msg": "Mongo connection error!" })
+	const client = await MongoClient.connect('mongodb://localhost:27017/DUCS').catch(err => {
+		res.status(500).json({ "msg": "Mongo connection error!" })
+		throw err
+	})
+	if (!client) {
+		res.status(500).json({ "msg": "Mongo connection error!" })
+		return
+	}
 
 	try {
 		var db = client.db('DUCS')
