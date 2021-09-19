@@ -4,6 +4,7 @@ var path = require('path')
 var cookieParser = require('cookie-parser')
 var logger = require('morgan')
 var favicon = require('serve-favicon')
+var cors=require('cors')
 
 var pageRouter = require('./routes/pages')
 var utilRouter = require('./routes/utils')
@@ -11,7 +12,7 @@ var notificationRouter = require('./routes/notifications')
 var editorRouter = require('./routes/editor')
 
 var app = express()
-
+app.use(cors());
 // serve-favicon
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
 
