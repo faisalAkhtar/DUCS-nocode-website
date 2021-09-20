@@ -1,20 +1,10 @@
 var express = require('express')
 var router = express.Router()
-var MongoClient = require('mongodb').MongoClient
+var db = require('../utils/db')
 
 router.get('/header', async function (req, res, next) {
-	const client = await MongoClient.connect('mongodb://localhost:27017/DUCS').catch(err => {
-		res.status(500).json({ "msg": "Mongo connection error!" })
-		throw err
-	})
-	if (!client) {
-		res.status(500).json({ "msg": "Mongo connection error!" })
-		return
-	}
-
 	try {
-		var db = client.db('DUCS')
-		var collection = db.collection('structure')
+		var collection = db.get().collection('structure')
 		let result = await collection.find({ "type": "util", "name": "header" }, { "_id": 0, "content": 1 }).toArray()
 		res.status(200).send(result[0].content)
 	} catch (err) {
@@ -26,18 +16,8 @@ router.get('/header', async function (req, res, next) {
 })
 
 router.get('/menu', async function (req, res, next) {
-	const client = await MongoClient.connect('mongodb://localhost:27017/DUCS').catch(err => {
-		res.status(500).json({ "msg": "Mongo connection error!" })
-		throw err
-	})
-	if (!client) {
-		res.status(500).json({ "msg": "Mongo connection error!" })
-		return
-	}
-
 	try {
-		var db = client.db('DUCS')
-		var collection = db.collection('structure')
+		var collection = db.get().collection('structure')
 		let result = await collection.find().sort({ "order": 1 }).toArray()
 		let menuMarkup = ""
 		menuMarkup += "\n<div id='headermenu'>"
@@ -79,18 +59,8 @@ router.get('/menu', async function (req, res, next) {
 })
 
 router.get('/footer', async function (req, res, next) {
-	const client = await MongoClient.connect('mongodb://localhost:27017/DUCS').catch(err => {
-		res.status(500).json({ "msg": "Mongo connection error!" })
-		throw err
-	})
-	if (!client) {
-		res.status(500).json({ "msg": "Mongo connection error!" })
-		return
-	}
-
 	try {
-		var db = client.db('DUCS')
-		var collection = db.collection('structure')
+		var collection = db.get().collection('structure')
 		let result = await collection.find({ "type": "util", "name": "footer" }, { "_id": 0, "content": 1 }).toArray()
 		res.status(200).send(result[0].content)
 	} catch (err) {

@@ -3,9 +3,6 @@ var router = express.Router()
 var MongoClient = require('mongodb').MongoClient
 
 router.get('/:category', async function (req, res, next) {
-	const client = await MongoClient.connect('mongodb://localhost:27017/DUCS').catch(err => { throw err })
-	if (!client) res.status(500).json({ "msg": "Mongo connection error!" })
-
 	try {
 		var db = client.db('DUCS')
 		var collection = db.collection('notifications')
