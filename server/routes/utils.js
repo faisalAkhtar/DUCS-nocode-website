@@ -1,16 +1,21 @@
 var express = require('express')
 var router = express.Router()
-var fs = require("fs")
-var path = require('path')
-var MongoClient = require('mongodb').MongoClient
+var db = require('../utils/db')
 
-async function getStructure() {
-	const client = await MongoClient.connect('mongodb://localhost:27017/DUCS').catch(err => { throw err })
-	if (!client) return
-
+router.get('/header', async function (req, res, next) {
 	try {
-		var db = client.db('DUCS')
-		var collection = db.collection('structure')
+		var collection = db.get().collection('structure')
+		let result = await collection.find({ "type": "util", "name": "header" }, { "_id": 0, "content": 1 }).toArray()
+		res.status(200).send(result[0].content)
+	} catch (err) {
+		console.error(err)
+		res.status(500).json({ "msg": err })
+	}
+})
+
+router.get('/menu', async function (req, res, next) {
+	try {
+		var collection = db.get().collection('structure')
 		let result = await collection.find().sort({ "order": 1 }).toArray()
 		let menuMarkup = ""
 		menuMarkup += "\n<div id='headermenu'>"
@@ -42,27 +47,22 @@ async function getStructure() {
 		menuMarkup += "\n</nav>"
 		menuMarkup += "\n</div>\n"
 
-		return menuMarkup
+		res.status(200).send(menuMarkup)
 	} catch (err) {
 		console.error(err)
-	} finally {
-		client.close()
+		res.status(500).json({ "msg": err })
 	}
-}
+})
 
-async function processPage(directory, pagename) {
-	var head = fs.readFileSync(path.join(__dirname + '/../pages/utils/') + 'head.html', 'utf-8').toString()
-	var header = fs.readFileSync(path.join(__dirname + '/../pages/utils/') + 'header.html', 'utf-8').toString()
-	var menu = await getStructure()
-	var page = fs.readFileSync(path.join(__dirname + '/../pages' + directory) + pagename, 'utf-8').toString()
-	var footer = fs.readFileSync(path.join(__dirname + '/../pages/utils/') + 'footer.html', 'utf-8').toString()
-	var tail = fs.readFileSync(path.join(__dirname + '/../pages/utils/') + 'tail.html', 'utf-8').toString()
-
-	return head + header + menu + page + footer + tail
-}
-
-router.get('/', async function (req, res, next) {
-	res.send(await processPage('/', 'home.html'))
+router.get('/footer', async function (req, res, next) {
+	try {
+		var collection = db.get().collection('structure')
+		let result = await collection.find({ "type": "util", "name": "footer" }, { "_id": 0, "content": 1 }).toArray()
+		res.status(200).send(result[0].content)
+	} catch (err) {
+		console.error(err)
+		res.status(500).json({ "msg": err })
+	}
 })
 
 module.exports = router
