@@ -10,8 +10,6 @@ router.get('/header', async function (req, res, next) {
 	} catch (err) {
 		console.error(err)
 		res.status(500).json({ "msg": err })
-	} finally {
-		client.close()
 	}
 })
 
@@ -53,8 +51,6 @@ router.get('/menu', async function (req, res, next) {
 	} catch (err) {
 		console.error(err)
 		res.status(500).json({ "msg": err })
-	} finally {
-		client.close()
 	}
 })
 
@@ -66,8 +62,6 @@ router.get('/footer', async function (req, res, next) {
 	} catch (err) {
 		console.error(err)
 		res.status(500).json({ "msg": err })
-	} finally {
-		client.close()
 	}
 })
 

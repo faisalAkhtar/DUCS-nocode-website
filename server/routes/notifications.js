@@ -1,11 +1,10 @@
 var express = require('express')
 var router = express.Router()
-var MongoClient = require('mongodb').MongoClient
+var db = require('../utils/db')
 
 router.get('/:category', async function (req, res, next) {
 	try {
-		var db = client.db('DUCS')
-		var collection = db.collection('notifications')
+		var collection = db.get().collection('notifications')
 		let result = await collection.find({ "category": req.params.category }, { "_id": 0, "content": 1 }).toArray()
 		console.log(result)
 		if (result.length == 0)
@@ -14,8 +13,6 @@ router.get('/:category', async function (req, res, next) {
 	} catch (err) {
 		console.error(err)
 		res.status(500).json({ "msg": err })
-	} finally {
-		client.close()
 	}
 })
 
