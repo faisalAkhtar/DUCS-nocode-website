@@ -1,0 +1,20 @@
+
+.mainMenu{
+  border: #282c34 5px;
+  color: black;
+
+}
+.menu{
+  border: #282c34 2px;  
+  color : black;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+.horizontal{
+  float: left;
+  margin: 5px;
+}
+.vertical{
+  display: block;
+}
