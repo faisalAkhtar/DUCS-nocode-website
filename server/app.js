@@ -1,21 +1,21 @@
-var createError = require('http-errors')
 var express = require('express')
-var path = require('path')
 var cookieParser = require('cookie-parser')
 var logger = require('morgan')
 var favicon = require('serve-favicon')
 var cors = require('cors')
+var createError = require('http-errors')
+var path = require('path')
 
-var pageRouter = require('./routes/pages')
-var utilRouter = require('./routes/utils')
-var notificationRouter = require('./routes/notifications')
-var editorRouter = require('./routes/editor')
+var pageRouter = require('./routes/website-routers/pages')
+var utilRouter = require('./routes/website-routers/utils')
+var notificationRouter = require('./routes/website-routers/notifications')
+var editorRouter = require('./routes/editor-routers/editor')
 
 var app = express()
 app.use(cors())
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
 
-app.use(logger('dev'))
+app.use(logger('[:date] :method :url :status :response-time ms - :res[content-length]'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
@@ -37,7 +37,6 @@ app.use(function (err, req, res, next) {
 	res.locals.error = req.app.get('env') === 'development' ? err : {}
 
 	res.status(err.status || 500)
-	// res.render('error')
 	res.json({
 		"msg": res.locals.message,
 		"status": res.locals.error.status,

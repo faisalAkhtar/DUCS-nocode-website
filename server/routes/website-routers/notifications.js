@@ -1,6 +1,6 @@
 var express = require('express')
 var router = express.Router()
-var db = require('../utils/db')
+var db = require('../../utils/db')
 
 router.get('/:category', async function (req, res, next) {
 	try {
