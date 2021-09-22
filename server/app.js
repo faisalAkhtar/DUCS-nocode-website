@@ -6,9 +6,7 @@ var cors = require('cors')
 var createError = require('http-errors')
 var path = require('path')
 
-var pageRouter = require('./routes/website-routers/pages')
-var utilRouter = require('./routes/website-routers/utils')
-var notificationRouter = require('./routes/website-routers/notifications')
+var WebsiteRouter = require('./routes/website-route.config')
 var editorRouter = require('./routes/editor-routers/editor')
 
 var app = express()
@@ -21,9 +19,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
-app.use('/page/', pageRouter)
-app.use('/util/', utilRouter)
-app.use('/notification/', notificationRouter)
+WebsiteRouter.routeConfig(app)
 app.use('/awesome-editor', editorRouter)
 
 // catch 404 and forward to error handler
