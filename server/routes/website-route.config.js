@@ -1,0 +1,14 @@
+const Utilities = require('../controllers/UtilityFileServer')
+const Pages = require('../controllers/PageServer')
+const Notifications = require('../controllers/NotificationServer')
+
+exports.routeConfig = function (app) {
+    app.get('/util/:item', Utilities.GetUtilityFiles)
+
+    app.get('/page/', Pages.GetHome)
+    app.get('/page/:page', Pages.GetPage)
+    app.get('/page/:dir/:page', Pages.GetPageInADirectory)
+    app.get('/page/:dir/:subdir/:page', Pages.GetPageInASubdirectory)
+
+    app.get('/notification/:category', Notifications.GetNotifications)
+}

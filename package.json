@@ -1,5 +1,23 @@
 {
-  "dependencies": {
-    "cors": "^2.8.5"
-  }
+	"name": "reimagined-spoon",
+	"version": "1.0.0",
+	"description": "",
+	"scripts": {
+		"server": "cd server && npm run dev",
+		"client": "cd client && npm start",
+		"dev": "concurrently \"npm run server\" \"npm run client\""
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/faisalAkhtar/reimagined-spoon.git"
+	},
+	"author": "Faisal Akhtar, Himani",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/faisalAkhtar/reimagined-spoon/issues"
+	},
+	"homepage": "https://github.com/faisalAkhtar/reimagined-spoon#readme",
+	"dependencies": {
+		"concurrently": "^6.2.1"
+	}
 }
