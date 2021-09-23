@@ -1,4 +1,4 @@
-var db = require('./db')
+var db = require('../utils/db')
 
 exports.list = function (categoryOfNotifications, callbackFunc, noOfNotifications) {
     var notificationCollection = db.get().collection('notifications')

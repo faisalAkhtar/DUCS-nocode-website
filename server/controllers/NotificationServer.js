@@ -1,4 +1,4 @@
-const NotificationModel = require('../../utils/notifications.model')
+const NotificationModel = require('../models/notifications.model')
 
 exports.GetNotifications = function (req, res, next) {
 	NotificationModel.list(req.params.category,

@@ -5,15 +5,15 @@ exports.GetUtilityFiles = function (req, res, next) {
 	let filename = ""
 	switch (req.params.item) {
 		case "header":
-			filename = '/../../pages/utils/header.html'
+			filename = '/../pages/utils/header.html'
 			break;
 
 		case "menu":
-			filename = '/../../pages/utils/menu.html'
+			filename = '/../pages/utils/menu.html'
 			break;
 
 		case "footer":
-			filename = '/../../pages/utils/footer.html'
+			filename = '/../pages/utils/footer.html'
 			break;
 
 		default:
