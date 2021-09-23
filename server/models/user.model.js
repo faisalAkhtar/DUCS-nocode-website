@@ -13,3 +13,11 @@ exports.createUser = function ({ firstName, lastName, email, password, permissio
 
     userCollection.insertOne(user, (err, response) => callbackFunc(err, response))
 }
+
+exports.findUserByEmail = function (email, callbackFunc) {
+    var userCollection = db.get().collection('users')
+
+    userCollection
+        .find({ email: email })
+        .toArray((err, docs) => callbackFunc(err, docs))
+}
