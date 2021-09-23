@@ -1,8 +1,8 @@
-import Menu from './Menu'
-import Header from './Header';
-import Footer from './Footer';
-import Page from './Page';
-import Notifications from './Notifications';
+import Menu from './default/Menu'
+import Header from './default/Header';
+import Footer from './default/Footer';
+import Page from './default/Page';
+//import Notifications from './default/Notifications';
 function App() {
   return (
       <div>

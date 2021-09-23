@@ -1,5 +1,4 @@
 import React from "react";
-import "./App.css";
 import axios from "axios";
 import ReactHtmlParser from 'react-html-parser'; 
 
@@ -9,7 +8,7 @@ class Footer extends React.Component{
         markup:""
     }
     componentDidMount(){
-        axios.get(baseurl+'page/'+window.location.pathname).then(
+        axios.get(baseurl+'util/footer').then(
             res=>{
                 console.log("response header recieved");
                 this.setState({markup : res.data});

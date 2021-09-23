@@ -1,13 +1,12 @@
 import React from "react";
-import "./App.css";
 import axios from "axios";
 import ReactHtmlParser from 'react-html-parser'; 
 
 const baseurl="http://localhost:5000/"
 class Menu extends React.Component{
-    constructor(props){
+    /*constructor(props){
         super(props);
-    }
+    }*/
     state={
         markup:""
     }
