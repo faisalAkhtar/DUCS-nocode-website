@@ -77,3 +77,62 @@ exports.fileExists = function (address, callbackFunc) {
             }
         )
 }
+
+exports.add = function (name, type, address, callbackFunc) {
+    let item = {
+        type,
+        name,
+        order: -1,
+    }
+    if (type === "page")
+        item.draft = false
+
+    var filesystemCollection = db.get().collection('filesystem')
+    if (address.length === 1) {
+        item.link = address[0]
+        filesystemCollection.insertOne(item, (err, res) => callbackFunc(err, res))
+    } else {
+        filesystemCollection
+            .findOne(
+                { link: address[0] },
+                (err, doc) => {
+                    if (err)
+                        return callbackFunc(err, null)
+
+                    if (address.length === 2) {
+                        item.link = address[1]
+                        doc.items.push(item)
+                        filesystemCollection.updateOne(
+                            { link: address[0] },
+                            { $set: { items: doc.items } },
+                            (err, res) => callbackFunc(err, res)
+                        )
+                    } else {
+                        let it = 0
+                        let subdoc = null
+                        for (; it < doc.items.length; it++) {
+                            if (doc.items[it].link === address[1]) {
+                                subdoc = doc.items[it]
+                                break
+                            }
+                        }
+                        for (const it of doc.items) {
+                            if (it.link === address[1]) {
+                                subdoc = it
+                                break
+                            }
+                        }
+
+                        item.link = address[2]
+                        subdoc.items.push(item)
+                        doc.items[it] = subdoc
+                        filesystemCollection.updateOne(
+                            { link: address[0] },
+                            { $set: { items: doc.items } },
+                            (err, res) => callbackFunc(err, res)
+                        )
+                    }
+                }
+            )
+    }
+}
