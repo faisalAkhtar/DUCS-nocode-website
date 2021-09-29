@@ -1,4 +1,6 @@
 const FilesystemModal = require('../models/filesystem.model')
+const fs = require('fs')
+const path = require('path')
 
 exports.GetFilesystem = function (req, res, next) {
     FilesystemModal.list(
@@ -21,8 +23,8 @@ exports.GetFilesystem = function (req, res, next) {
     )
 }
 
-exports.AddFileToDB = function (req, res, next) {
-    if (res.locals.fileFound)
+exports.AddItemToDB = function (req, res, next) {
+    if (res.locals.itemFound)
         return res.status(400).json({ msg: "Item exists" })
 
     let name = req.body.name.trim(),
@@ -38,7 +40,38 @@ exports.AddFileToDB = function (req, res, next) {
         (err, result) => {
             if (err)
                 return res.status(500).json({ "msg": err })
-            return res.status(200).send('OKKK')
+            return next()
         }
     )
+}
+
+exports.AddItemToServer = function (req, res, next) {
+    let itempath = '/../pages',
+        address = req.body.address,
+        name = req.body.name,
+        type = req.body.type
+
+    address.forEach(link => { itempath += "/" + link })
+
+    if (type === 'menu') {
+        fs.mkdir(
+            path.join(__dirname + itempath),
+            (err) => {
+                if (err)
+                    return res.status(500).json({ "msg": err })
+                return res.status(200).send('OKKK')
+            }
+        )
+    } else {
+        itempath += '.html'
+        fs.writeFile(
+            path.join(__dirname + itempath),
+            '<h1>' + name + '</h1>',
+            (err) => {
+                if (err)
+                    return res.status(500).json({ "msg": err })
+                return res.status(200).send('OKKK')
+            }
+        )
+    }
 }

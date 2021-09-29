@@ -36,11 +36,13 @@ exports.fileExists = function (address, callbackFunc) {
 
                 // finding document from address[1]
                 let found = false
-                for (const it of doc.items) {
-                    if (it.link === address[1]) {
-                        found = true
-                        doc = it
-                        break
+                if (doc.items) {
+                    for (const it of doc.items) {
+                        if (it.link === address[1]) {
+                            found = true
+                            doc = it
+                            break
+                        }
                     }
                 }
 
@@ -60,10 +62,12 @@ exports.fileExists = function (address, callbackFunc) {
 
                 // finding document from address[2]
                 found = false
-                for (const it of doc.items) {
-                    if (it.link === address[2]) {
-                        found = true
-                        break
+                if (doc.items) {
+                    for (const it of doc.items) {
+                        if (it.link === address[2]) {
+                            found = true
+                            break
+                        }
                     }
                 }
 
@@ -101,7 +105,9 @@ exports.add = function (name, type, address, callbackFunc) {
 
                     if (address.length === 2) {
                         item.link = address[1]
-                        doc.items.push(item)
+                        if (doc.items)
+                            doc.items.push(item)
+                        else doc.items = [item]
                         filesystemCollection.updateOne(
                             { link: address[0] },
                             { $set: { items: doc.items } },
@@ -124,7 +130,9 @@ exports.add = function (name, type, address, callbackFunc) {
                         }
 
                         item.link = address[2]
-                        subdoc.items.push(item)
+                        if (subdoc.items)
+                            subdoc.items.push(item)
+                        else subdoc.items = [item]
                         doc.items[it] = subdoc
                         filesystemCollection.updateOne(
                             { link: address[0] },
