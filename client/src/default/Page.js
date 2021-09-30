@@ -8,7 +8,7 @@ class Page extends React.Component{
         markup:""
     }
     componentDidMount(){
-        axios.get(baseurl+'page/'+window.location.pathname).then(
+        axios.get(baseurl+'page'+window.location.pathname).then(
             res=>{
                 console.log("response header recieved");
                 this.setState({markup : res.data});

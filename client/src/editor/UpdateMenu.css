@@ -1,0 +1,39 @@
+ul{
+  display: block;
+  /* width:90%; */
+  /* padding: 1% 5%; */
+  
+}
+li{
+    list-style-type: none;
+    border-color: black;
+    border : 1px 1px 0px 1px solid;
+    font-size: X-large;
+    width:100%;
+    padding: 10px;
+    
+}
+.add {
+    background-color: aliceblue;
+    width :fit-content;
+    font-size: large;
+    float: right;
+    margin-right: 10px;
+}
+.delete{
+    background-color: aliceblue;
+    width :fit-content;
+    font-size: large;
+    float: right;
+}
+.update{
+    background-color: aliceblue;
+    width :fit-content;
+    font-size: large;
+    float: right;
+    margin-right:10px;
+}
+.menucreator{
+    height:100%;
+    width:100%;
+  }

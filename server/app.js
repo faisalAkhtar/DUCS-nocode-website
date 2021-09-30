@@ -21,7 +21,7 @@ app.use(function (req, res, next) {
 	else return next()
 })
 
-app.use(logger('[:date] :method :url :status :response-time ms - :res[content-length]'))
+app.use(logger('[:date[clf]] :method :url :status :response-time ms - :res[content-length]'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
