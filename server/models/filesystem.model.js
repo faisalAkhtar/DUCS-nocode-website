@@ -86,7 +86,7 @@ exports.add = function (name, type, address, callbackFunc) {
     let item = {
         type,
         name,
-        order: -1,
+        order: 9,
     }
     if (type === "page")
         item.draft = false
@@ -138,11 +138,11 @@ exports.add = function (name, type, address, callbackFunc) {
     }
 }
 
-exports.remove = function (address, callbackFunc) {
+exports.remove = function (address, type, callbackFunc) {
     var filesystemCollection = db.get().collection('filesystem')
     if (address.length === 1) {
         filesystemCollection.deleteOne(
-            { link: address[0] },
+            { link: address[0], type: type },
             (err, res) => callbackFunc(err, res)
         )
     } else {
@@ -153,7 +153,10 @@ exports.remove = function (address, callbackFunc) {
                     return callbackFunc(err, null)
 
                 if (address.length === 2) {
-                    doc.items = doc.items.filter(item => item.link !== address[1])
+                    let updatedItems = doc.items.filter(item => item.link !== address[1] || item.type !== type)
+                    if (updatedItems.length === doc.items.length)
+                        return callbackFunc("Wrong file type", null)
+                    else doc.items = updatedItems
                     filesystemCollection.updateOne(
                         { link: address[0] },
                         { $set: { items: doc.items } },
@@ -169,12 +172,17 @@ exports.remove = function (address, callbackFunc) {
                         }
                     }
 
-                    subdoc = subdoc.items.filter(item => item.link !== address[2])
+                    let updatedItems = subdoc.items.filter(item => item.link !== address[2] || item.type !== type)
+                    if (updatedItems.length === subdoc.items.length)
+                        return callbackFunc("Wrong file type", null)
+                    else subdoc = updatedItems
                     doc.items[it].items = subdoc
                     filesystemCollection.updateOne(
                         { link: address[0] },
                         { $set: { items: doc.items } },
-                        (err, res) => callbackFunc(err, res)
+                        (err, res) => {
+                            return callbackFunc(err, res)
+                        }
                     )
                 }
             }

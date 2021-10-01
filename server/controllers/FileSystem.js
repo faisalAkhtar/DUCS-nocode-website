@@ -28,10 +28,10 @@ exports.AddItemToDB = function (req, res, next) {
         return res.status(400).json({ msg: "Item exists" })
 
     let name = req.body.name.trim(),
-        type = req.body.type.trim(),
+        type = req.body.type,
         address = req.body.address
 
-    if (!name || !type || ["page", "menu"].indexOf(type) === -1)
+    if (!name)
         return res.status(400).json({ msg: "Invalid syntax" })
     else if (address.length === 3 && type !== "page")
         return res.status(400).json({ msg: "Cannot add this item here" })
@@ -80,12 +80,13 @@ exports.RemoveItemFromDB = function (req, res, next) {
     if (!res.locals.itemFound)
         return res.status(404).json({ msg: "Item does not exist" })
 
-    let address = req.body.address
+    let address = req.body.address,
+        type = req.body.type
 
-    FilesystemModal.remove(address,
+    FilesystemModal.remove(address, type,
         (err, result) => {
             if (err)
-                return res.status(500).json({ "msg": err })
+                return res.status(400).json({ "msg": err })
             return next()
         }
     )
@@ -94,10 +95,7 @@ exports.RemoveItemFromDB = function (req, res, next) {
 exports.RemoveItemFromServer = function (req, res, next) {
     let itempath = '/../pages',
         address = req.body.address,
-        type = req.body.type.trim()
-
-    if (!type || ["page", "menu"].indexOf(type) === -1)
-        return res.status(400).json({ msg: "Invalid type" })
+        type = req.body.type
 
     address.forEach(link => { itempath += "/" + link })
     if (type === 'page') itempath += ".html"
