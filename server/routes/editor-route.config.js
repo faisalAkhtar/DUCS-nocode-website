@@ -25,4 +25,11 @@ exports.routeConfig = function (app) {
         FilesystemController.AddItemToDB,
         FilesystemController.AddItemToServer
     ])
+
+    app.delete('/awesome-editor/filesystem', [
+        ValidationMiddleware.validateJWT,
+        FilesystemMiddleware.CheckIfItemExists,
+        FilesystemController.RemoveItemFromDB,
+        FilesystemController.RemoveItemFromServer
+    ])
 }

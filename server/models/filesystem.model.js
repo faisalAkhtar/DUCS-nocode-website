@@ -96,51 +96,88 @@ exports.add = function (name, type, address, callbackFunc) {
         item.link = address[0]
         filesystemCollection.insertOne(item, (err, res) => callbackFunc(err, res))
     } else {
-        filesystemCollection
-            .findOne(
-                { link: address[0] },
-                (err, doc) => {
-                    if (err)
-                        return callbackFunc(err, null)
+        filesystemCollection.findOne(
+            { link: address[0] },
+            (err, doc) => {
+                if (err)
+                    return callbackFunc(err, null)
 
-                    if (address.length === 2) {
-                        item.link = address[1]
-                        if (doc.items)
-                            doc.items.push(item)
-                        else doc.items = [item]
-                        filesystemCollection.updateOne(
-                            { link: address[0] },
-                            { $set: { items: doc.items } },
-                            (err, res) => callbackFunc(err, res)
-                        )
-                    } else {
-                        let it = 0
-                        let subdoc = null
-                        for (; it < doc.items.length; it++) {
-                            if (doc.items[it].link === address[1]) {
-                                subdoc = doc.items[it]
-                                break
-                            }
+                if (address.length === 2) {
+                    item.link = address[1]
+                    if (doc.items)
+                        doc.items.push(item)
+                    else doc.items = [item]
+                    filesystemCollection.updateOne(
+                        { link: address[0] },
+                        { $set: { items: doc.items } },
+                        (err, res) => callbackFunc(err, res)
+                    )
+                } else {
+                    let it = 0
+                    let subdoc = null
+                    for (; it < doc.items.length; it++) {
+                        if (doc.items[it].link === address[1]) {
+                            subdoc = doc.items[it]
+                            break
                         }
-                        for (const it of doc.items) {
-                            if (it.link === address[1]) {
-                                subdoc = it
-                                break
-                            }
-                        }
-
-                        item.link = address[2]
-                        if (subdoc.items)
-                            subdoc.items.push(item)
-                        else subdoc.items = [item]
-                        doc.items[it] = subdoc
-                        filesystemCollection.updateOne(
-                            { link: address[0] },
-                            { $set: { items: doc.items } },
-                            (err, res) => callbackFunc(err, res)
-                        )
                     }
+
+                    item.link = address[2]
+                    if (subdoc.items)
+                        subdoc.items.push(item)
+                    else subdoc.items = [item]
+                    doc.items[it] = subdoc
+                    filesystemCollection.updateOne(
+                        { link: address[0] },
+                        { $set: { items: doc.items } },
+                        (err, res) => callbackFunc(err, res)
+                    )
                 }
-            )
+            }
+        )
+    }
+}
+
+exports.remove = function (address, callbackFunc) {
+    var filesystemCollection = db.get().collection('filesystem')
+    if (address.length === 1) {
+        filesystemCollection.deleteOne(
+            { link: address[0] },
+            (err, res) => callbackFunc(err, res)
+        )
+    } else {
+        filesystemCollection.findOne(
+            { link: address[0] },
+            (err, doc) => {
+                if (err)
+                    return callbackFunc(err, null)
+
+                if (address.length === 2) {
+                    doc.items = doc.items.filter(item => item.link !== address[1])
+                    filesystemCollection.updateOne(
+                        { link: address[0] },
+                        { $set: { items: doc.items } },
+                        (err, res) => callbackFunc(err, res)
+                    )
+                } else {
+                    let it = 0
+                    let subdoc = null
+                    for (; it < doc.items.length; it++) {
+                        if (doc.items[it].link === address[1]) {
+                            subdoc = doc.items[it]
+                            break
+                        }
+                    }
+
+                    subdoc = subdoc.items.filter(item => item.link !== address[2])
+                    doc.items[it].items = subdoc
+                    filesystemCollection.updateOne(
+                        { link: address[0] },
+                        { $set: { items: doc.items } },
+                        (err, res) => callbackFunc(err, res)
+                    )
+                }
+            }
+        )
     }
 }

@@ -75,3 +75,58 @@ exports.AddItemToServer = function (req, res, next) {
         )
     }
 }
+
+exports.RemoveItemFromDB = function (req, res, next) {
+    if (!res.locals.itemFound)
+        return res.status(404).json({ msg: "Item does not exist" })
+
+    let address = req.body.address
+
+    FilesystemModal.remove(address,
+        (err, result) => {
+            if (err)
+                return res.status(500).json({ "msg": err })
+            return next()
+        }
+    )
+}
+
+exports.RemoveItemFromServer = function (req, res, next) {
+    let itempath = '/../pages',
+        address = req.body.address,
+        type = req.body.type.trim()
+
+    if (!type || ["page", "menu"].indexOf(type) === -1)
+        return res.status(400).json({ msg: "Invalid type" })
+
+    address.forEach(link => { itempath += "/" + link })
+    if (type === 'page') itempath += ".html"
+
+    fs.stat(
+        path.join(__dirname + itempath),
+        (err, stats) => {
+            if (err) {
+                if (err) return res.status(500).send({ "msg": err })
+            }
+
+            if (type === 'page') {
+                fs.unlink(
+                    path.join(__dirname + itempath),
+                    (err, result) => {
+                        if (err) return res.status(500).send({ "msg": err })
+                        return res.status(200).send('Okk')
+                    }
+                )
+            } else {
+                fs.rm(
+                    path.join(__dirname + itempath),
+                    { recursive: true },
+                    (err, result) => {
+                        if (err) return res.status(500).send({ "msg": err })
+                        return res.status(200).send('Okk')
+                    }
+                )
+            }
+        }
+    )
+}
