@@ -8,7 +8,7 @@ exports.list = function (callbackFunc) {
         .toArray((err, docs) => callbackFunc(err, docs))
 }
 
-exports.fileExists = function (address, callbackFunc) {
+exports.fileExists = function (address, type, callbackFunc) {
     var filesystemCollection = db.get().collection('filesystem')
     // finding document in address[0]
     filesystemCollection
@@ -29,7 +29,7 @@ exports.fileExists = function (address, callbackFunc) {
 
                 // document found from address[0]
                 // address.length === 1 means our search is over
-                if (address.length === 1)
+                if (address.length === 1 && type === doc.type)
                     return callbackFunc(1)
                 else if (doc.type !== "menu")
                     return callbackFunc(-1)
@@ -55,7 +55,7 @@ exports.fileExists = function (address, callbackFunc) {
 
                 // document found from address[1]
                 // address.length === 2 means our search is over
-                if (address.length === 2)
+                if (address.length === 2 && type === doc.type)
                     return callbackFunc(1)
                 else if (doc.type !== "menu")
                     return callbackFunc(-1)
@@ -72,7 +72,7 @@ exports.fileExists = function (address, callbackFunc) {
                 }
 
                 // document NOT found from address[2]
-                if (!found)
+                if (!found && type === 'page')
                     return callbackFunc(0)
 
                 // document found from address[2]

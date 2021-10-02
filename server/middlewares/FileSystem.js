@@ -15,7 +15,7 @@ exports.CheckIfItemExists = function (req, res, next) {
     if (type.length === 0 || ["page", "menu"].indexOf(type) === -1)
         return res.status(400).json({ msg: "Invalid syntax" })
 
-    FilesystemModal.fileExists(address,
+    FilesystemModal.fileExists(address, type,
         (sign) => {
             if (sign === -2)
                 return res.status(500).json({ msg: "Unknown error with database" })
