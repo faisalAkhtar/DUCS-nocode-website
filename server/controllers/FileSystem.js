@@ -34,7 +34,9 @@ exports.AddItemToDB = function (req, res, next) {
     if (!name)
         return res.status(400).json({ msg: "Invalid syntax" })
     else if (address.length === 3 && type !== "page")
-        return res.status(400).json({ msg: "Cannot add this item here" })
+        return res.status(406).json({ msg: "Not Acceptable" })
+    else if (address[0] === "index" || address[0] === "utils")
+        return res.status(406).json({ msg: "Not Acceptable" })
 
     FilesystemModal.add(name, type, address,
         (err, result) => {
@@ -70,18 +72,20 @@ exports.AddItemToServer = function (req, res, next) {
             (err) => {
                 if (err)
                     return res.status(500).json({ "msg": err })
-                return res.status(200).send('OKKK')
+                return res.status(201).send('OKKK')
             }
         )
     }
 }
 
 exports.RemoveItemFromDB = function (req, res, next) {
-    if (!res.locals.itemFound)
-        return res.status(404).json({ msg: "Item does not exist" })
-
     let address = req.body.address,
         type = req.body.type
+
+    if (!res.locals.itemFound)
+        return res.status(404).json({ msg: "Item does not exist" })
+    else if (address[0] === "index" || address[0] === "utils")
+        return res.status(403).json({ msg: "Forbidden" })
 
     FilesystemModal.remove(address, type,
         (err, result) => {

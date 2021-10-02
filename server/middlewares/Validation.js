@@ -1,5 +1,6 @@
+require('dotenv').config()
 const jwt = require('jsonwebtoken')
-const jwtSecret = require('../env.config').jwtSecret
+const jwtSecret = process.env.JWTSECRET
 
 exports.validateJWT = function (req, res, next) {
     if (req.headers['authorization']) {

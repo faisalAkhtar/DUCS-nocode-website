@@ -21,6 +21,7 @@ app.use(function (req, res, next) {
 
 logger.token('date', () => (new Date()).toLocaleString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, day: 'numeric', month: 'short' }))
 app.use(logger('[:date] :method :url :status :response-time ms - :res[content-length]'))
+app.disable('x-powered-by')
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())

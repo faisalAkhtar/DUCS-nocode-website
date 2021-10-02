@@ -1,7 +1,8 @@
+require('dotenv').config()
 const crypto = require('crypto')
 const jwt = require('jsonwebtoken')
-const jwtSecret = require('../env.config').jwtSecret
-const jwtExpiry = require('../env.config').jwtExpirationInSeconds
+const jwtSecret = process.env.JWTSECRET
+const jwtExpiry = process.env.JWTEXPIRATIONINSECONDS
 
 exports.login = function (req, res, next) {
     try {
