@@ -107,9 +107,7 @@ exports.RemoveItemFromServer = function (req, res, next) {
     fs.stat(
         path.join(__dirname + itempath),
         (err, stats) => {
-            if (err) {
-                if (err) return res.status(500).send({ "msg": err })
-            }
+            if (err) return res.status(500).send({ "msg": err })
 
             if (type === 'page') {
                 fs.unlink(
@@ -129,6 +127,52 @@ exports.RemoveItemFromServer = function (req, res, next) {
                     }
                 )
             }
+        }
+    )
+}
+
+exports.ChangeItemFieldsInDatabase = function (req, res, next) {
+    let address = req.body.address,
+        type = req.body.type,
+        changes = req.body.changes
+
+    if (!res.locals.itemFound)
+        return res.status(404).json({ msg: "Item does not exist" })
+    else if (address[0] === "index" || address[0] === "utils")
+        return res.status(403).json({ msg: "Forbidden" })
+    else if (changes === {} || (!changes.name && !changes.link && !changes.draft))
+        return res.status(400).json({ msg: "Changes not provided" })
+
+    FilesystemModal.changeFields(address, type, changes,
+        (err, result) => {
+            if (err)
+                return res.status(400).json({ "msg": err })
+            return next()
+        }
+    )
+}
+
+exports.ChangeItemFieldsInServer = function (req, res, next) {
+    let oldLink = '/../pages',
+        newLink = req.body.changes.link,
+        address = req.body.address,
+        type = req.body.type
+
+    if (!newLink) return res.status(200).send('Okie')
+
+    address.forEach(link => { oldLink += "/" + link })
+    if (type === 'page') {
+        oldLink += ".html"
+        newLink += ".html"
+    }
+
+    newLink = oldLink.substring(0, oldLink.lastIndexOf("/") + 1) + newLink
+    fs.rename(
+        path.join(__dirname + oldLink),
+        path.join(__dirname + newLink),
+        (err, result) => {
+            if (err) return res.status(500).send({ "msg": err })
+            return res.status(200).send('Okay')
         }
     )
 }

@@ -32,4 +32,11 @@ exports.routeConfig = function (app) {
         FilesystemController.RemoveItemFromDB,
         FilesystemController.RemoveItemFromServer
     ])
+
+    app.patch('/awesome-editor/filesystem', [
+        ValidationMiddleware.validateJWT,
+        FilesystemMiddleware.CheckIfItemExists,
+        FilesystemController.ChangeItemFieldsInDatabase,
+        FilesystemController.ChangeItemFieldsInServer
+    ])
 }

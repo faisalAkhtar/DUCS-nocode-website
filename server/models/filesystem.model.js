@@ -189,3 +189,66 @@ exports.remove = function (address, type, callbackFunc) {
         )
     }
 }
+
+exports.changeFields = function (address, type, changes, callbackFunc) {
+    var filesystemCollection = db.get().collection('filesystem')
+    if (address.length === 1) {
+        let newValues = {}
+        if (changes.name) newValues.name = changes.name
+        if (changes.link) newValues.link = changes.link
+        if (changes.draft && type === 'page') newValues.draft = changes.draft
+        filesystemCollection.updateOne(
+            { link: address[0], type: type },
+            { $set: newValues },
+            (err, res) => callbackFunc(err, res)
+        )
+    } else {
+        filesystemCollection.findOne(
+            { link: address[0] },
+            (err, doc) => {
+                if (err)
+                    return callbackFunc(err, null)
+
+                if (address.length === 2) {
+                    let it = 0
+                    for (; it < doc.items.length; it++)
+                        if (doc.items[it].link === address[1])
+                            break
+
+                    if (changes.name) doc.items[it].name = changes.name
+                    if (changes.link) doc.items[it].link = changes.link
+                    if (changes.draft && type === 'page') doc.items[it].draft = changes.draft
+
+                    filesystemCollection.updateOne(
+                        { link: address[0] },
+                        { $set: { items: doc.items } },
+                        (err, res) => callbackFunc(err, res)
+                    )
+                } else {
+                    let i1 = 0, i2 = 0
+                    let subdoc = null
+                    for (; i1 < doc.items.length; i1++) {
+                        if (doc.items[i1].link === address[1]) {
+                            subdoc = doc.items[i1]
+                            break
+                        }
+                    }
+                    for (; i2 < subdoc.items.length; i2++)
+                        if (subdoc.items[i2].link === address[2])
+                            break
+
+                    if (changes.name) subdoc.items[i2].name = changes.name
+                    if (changes.link) subdoc.items[i2].link = changes.link
+                    if (changes.draft && type === 'page') subdoc.items[i2].draft = changes.draft
+
+                    doc.items[i1].items = subdoc
+                    filesystemCollection.updateOne(
+                        { link: address[0] },
+                        { $set: { items: doc.items } },
+                        (err, res) => callbackFunc(err, res)
+                    )
+                }
+            }
+        )
+    }
+}
