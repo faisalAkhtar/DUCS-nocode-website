@@ -39,4 +39,9 @@ exports.routeConfig = function (app) {
         FilesystemController.ChangeItemFieldsInDatabase,
         FilesystemController.ChangeItemFieldsInServer
     ])
+
+    app.patch('/awesome-editor/filesystem/order', [
+        ValidationMiddleware.validateJWT,
+        FilesystemController.ChangeItemOrder
+    ])
 }

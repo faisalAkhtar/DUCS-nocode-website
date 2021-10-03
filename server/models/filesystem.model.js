@@ -252,3 +252,75 @@ exports.changeFields = function (address, type, changes, callbackFunc) {
         )
     }
 }
+
+exports.changeOrder = function (newOrder, callbackFunc) {
+    let sorterFunc = function (a, b) {
+        let la = a.link.toLowerCase(),
+            lb = b.link.toLowerCase()
+        if (la < lb) return -1
+        if (la > lb) return 1
+        return 0
+    }
+
+    newOrder.sort(sorterFunc)
+
+    var filesystemCollection = db.get().collection('filesystem')
+    filesystemCollection.find().toArray(
+        (err, docs) => {
+            if (err) return callbackFunc(err)
+
+            if (docs.length !== newOrder.length)
+                return callbackFunc('Invalid structure provided')
+
+            docs.sort(sorterFunc)
+            for (let it = 0; it < docs.length; it++) {
+                if (docs[it].link !== newOrder[it].link) {
+                    return callbackFunc('Invalid structure provided')
+                }
+                docs[it].order = newOrder[it].order
+
+                if (docs[it].type === 'menu') {
+                    docs[it].items.sort(sorterFunc)
+                    newOrder[it].items.sort(sorterFunc)
+                    for (let jt = 0; jt < docs[it].items.length; jt++) {
+                        if (docs[it].items[jt].link !== newOrder[it].items[jt].link) {
+                            return callbackFunc('Invalid structure provided')
+                        }
+                        docs[it].items[jt].order = newOrder[it].items[jt].order
+
+                        if (docs[it].items[jt].type === 'menu') {
+                            docs[it].items[jt].items.sort(sorterFunc)
+                            newOrder[it].items[jt].items.sort(sorterFunc)
+                            for (let kt = 0; kt < docs[it].items[jt].items.length; kt++) {
+                                if (docs[it].items[jt].items[kt].link !== newOrder[it].items[jt].items[kt].link) {
+                                    return callbackFunc('Invalid structure provided')
+                                }
+                                docs[it].items[jt].items[kt].order = newOrder[it].items[jt].items[kt].order
+                            }
+                        }
+
+                    }
+
+                    filesystemCollection.updateOne(
+                        { link: docs[it].link },
+                        { $set: { order: docs[it].order, items: docs[it].items } },
+                        (err, res) => {
+                            if (err) return callbackFunc(err)
+                        }
+                    )
+                } else {
+                    filesystemCollection.updateOne(
+                        { link: docs[it].link },
+                        { $set: { order: docs[it].order } },
+                        (err, res) => {
+                            if (err) return callbackFunc(err)
+                        }
+                    )
+                }
+
+            }
+
+            return callbackFunc(null, docs)
+        }
+    )
+}

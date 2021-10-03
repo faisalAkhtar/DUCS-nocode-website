@@ -176,3 +176,18 @@ exports.ChangeItemFieldsInServer = function (req, res, next) {
         }
     )
 }
+
+exports.ChangeItemOrder = function (req, res, next) {
+    let order = req.body
+
+    if (!order || typeof (order) !== 'object')
+        return res.status(400).json({ "msg": "Invalid body sent" })
+
+    FilesystemModal.changeOrder(order,
+        (err, result) => {
+            if (err)
+                return res.status(400).json({ "msg": err })
+            return res.status(200).send(result)
+        }
+    )
+}
