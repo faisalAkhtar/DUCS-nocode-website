@@ -1,0 +1,181 @@
+[
+    {
+        "type": "menu",
+        "link": "home",
+        "name": "Home",
+        "order": 1,
+        "permission": [],
+        "items": [
+            {
+                "type": "page",
+                "link": "hod",
+                "name": "HOD Message",
+                "order": 1,
+                "draft": false
+            },
+            {
+                "type": "page",
+                "link": "faculty",
+                "name": "Faculty",
+                "order": 2,
+                "draft": false
+            },
+            {
+                "type": "page",
+                "link": "staff",
+                "name": "Staff",
+                "order": 3,
+                "draft": false
+            },
+            {
+                "type": "page",
+                "link": "infra",
+                "name": "Infrastructure",
+                "order": 4,
+                "draft": false
+            }
+        ]
+    },
+    {
+        "type": "menu",
+        "link": "admissions",
+        "name": "Admissions",
+        "order": 2,
+        "permission": [],
+        "items": [
+            {
+                "type": "page",
+                "link": "phd",
+                "name": "Ph.D. Computer Science",
+                "order": 1,
+                "draft": false
+            },
+            {
+                "type": "page",
+                "link": "mca",
+                "name": "MCA",
+                "order": 2,
+                "draft": false
+            },
+            {
+                "type": "page",
+                "link": "msc",
+                "name": "M.Sc. Computer Science",
+                "order": 3,
+                "draft": false
+            }
+        ]
+    },
+    {
+        "type": "menu",
+        "link": "exams",
+        "name": "Examination",
+        "order": 3,
+        "permission": [],
+        "items": [
+            {
+                "type": "page",
+                "link": "phd",
+                "name": "PHD Computer Science",
+                "order": 1,
+                "draft": false
+            },
+            {
+                "type": "page",
+                "link": "msc",
+                "name": "M.Sc. Computer Science",
+                "order": 2,
+                "draft": false
+            },
+            {
+                "type": "page",
+                "link": "mca",
+                "name": "MCA",
+                "order": 3,
+                "draft": false
+            },
+            {
+                "type": "menu",
+                "link": "obe",
+                "name": "OBE",
+                "order": 4,
+                "permission": [],
+                "items": [
+                    {
+                        "type": "page",
+                        "link": "june2021",
+                        "name": "June 2021",
+                        "order": 1,
+                        "draft": false
+                    },
+                    {
+                        "type": "page",
+                        "link": "june2020",
+                        "name": "June 2020",
+                        "order": 2,
+                        "draft": false
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "type": "menu",
+        "link": "programmes",
+        "name": "Programmes",
+        "order": 4,
+        "permission": [],
+        "items": [
+            {
+                "type": "page",
+                "link": "phd",
+                "name": "Ph.D. Computer Science",
+                "order": 1,
+                "draft": false
+            },
+            {
+                "type": "page",
+                "link": "mca",
+                "name": "MCA",
+                "order": 2,
+                "draft": false
+            },
+            {
+                "type": "page",
+                "link": "msc",
+                "name": "M.Sc. Computer Science",
+                "order": 3,
+                "draft": false
+            },
+            {
+                "type": "page",
+                "link": "bsc",
+                "name": "B.Sc. (H) Computer Science",
+                "order": 4,
+                "draft": false
+            },
+            {
+                "type": "page",
+                "link": "ug-syllabi",
+                "name": "UG Programmes Syllabi",
+                "order": 5,
+                "draft": false
+            },
+            {
+                "type": "page",
+                "link": "guidelines",
+                "name": "Guidelines",
+                "order": 6,
+                "draft": false
+            }
+        ]
+    },
+    {
+        "type": "page",
+        "link": "contact-us",
+        "name": "Contact Us",
+        "order": 5,
+        "permission": [],
+        "draft": false
+    }
+]

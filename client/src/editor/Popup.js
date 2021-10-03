@@ -88,8 +88,12 @@ class UpdatePop extends React.Component{
             changes.order=this.state.order;
         if(this.state.draft!==this.props.parent.draft)
             changes.draft=this.state.draft;
-        this.props.update(this.props.parent.address,changes);
-        this.close();
+        if(changes==={})
+        else{
+            this.props.update(this.props.parent.address,changes);
+            this.close();
+        }
+        
     }
     render(){
         return(

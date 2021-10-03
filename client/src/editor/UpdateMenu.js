@@ -356,7 +356,7 @@ class UpdateMenu extends React.Component{
     update=(address,changes)=>{
         console.log(changes);
         axios.put(baseurl+"awesome-editor",
-            {address,changes},
+            {address,changes},//type
             {headers:{"authorization": "Bearer "+this.props.authToken}}
         ).then(
             res=>{
