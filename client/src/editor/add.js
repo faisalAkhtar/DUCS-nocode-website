@@ -18,7 +18,7 @@ class DeleteButton extends React.Component{
     }
     onclick=()=>{
         console.log("from button "+ this.props.address);
-        this.props.delete(this.props.address);
+        this.props.delete(this.props.address,this.props.type);
     }
     render(){
         return <button className="delete" onClick={e=>this.onclick()}>Delete</button>;
@@ -32,7 +32,8 @@ class UpdateButton extends React.Component{
         var clicked={"address":this.props.address,
                     "order":this.props.order,
                     "name":this.props.name,
-                    "draft":this.props.draft};
+                    "draft":this.props.draft,
+                    "type":this.props.type};
         console.log(clicked);
         this.props.lastclicked(clicked);
         this.props.toggle();

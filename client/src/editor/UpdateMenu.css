@@ -1,13 +1,45 @@
+.menucreator{
+    display: block;
+    height:100%;
+    width:100%;
+}
+.heading{
+    display: inline-block;
+    padding: 10px;
+    width: 100%;
+    /* align-items: center; */
+    /* margin: 50px; */
+    background-color: #eff;
+}
+.menu{
+    display: inline-block;
+    width: 100%;
+}
+h1{
+    /* float: left; */
+    padding-left: 10px;
+    margin: 10px;
+    display: inline-block; 
+}
+.addbutton{
+    display: inline-block;
+    /* margin: 0 auto; */
+    float: right;
+     padding: 20px;
+}
 ul{
   display: block;
   /* width:90%; */
   /* padding: 1% 5%; */
-  
+  margin-top: 5px;
+  border-color: black;
+   
 }
 li{
     list-style-type: none;
-    border-color: black;
-    border : 1px 1px 0px 1px solid;
+    /* border : 2px 1px 0px 1px solid rgb(212, 212, 212);  */
+    /* border-bottom: 3px solid rgb(212, 212, 212); */
+    
     font-size: X-large;
     width:100%;
     padding: 10px;
@@ -19,6 +51,9 @@ li{
     font-size: large;
     float: right;
     margin-right: 10px;
+    margin-top: auto;
+    /* background-image: ; */
+    border-radius: 50%;
 }
 .delete{
     background-color: aliceblue;
@@ -33,7 +68,3 @@ li{
     float: right;
     margin-right:10px;
 }
-.menucreator{
-    height:100%;
-    width:100%;
-  }

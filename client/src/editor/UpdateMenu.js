@@ -261,14 +261,14 @@ class UpdateMenu extends React.Component{
     changeLastClick=(arr)=>{
         this.setState({lastclicked:arr});
     }
-    /*ComponentDidMount(){
-        axios.get(baseurl).then(
+    ComponentDidMount(){
+        axios.get(baseurl+"awesome-editor/filesystem").then(
             res=>{
                 this.setState({oldMenu:res.data.Menu}); //change name of data object as provided in response
-                this.setState({newMenu:oldMenu});
+                this.setState({newMenu:res.data.Menu});
             }
         )
-    }*/
+    }
     toggleAddPopup=()=>{
         this.setState({addPopUp:!(this.state.addPopUp)});
     }
@@ -302,11 +302,11 @@ class UpdateMenu extends React.Component{
             toAdd.order=obj2[0].items.length+1;
             obj2[0].items.push(toAdd);
         }
-        this.render();  //dont you think instead of doing all this we should directly send the request to backend to get new filestructure again if success has been achived
-        /*axios.post(baseurl+"awesome-editor/",
+        //this.render();  
+        axios.post(baseurl+"awesome-editor/filesystem",
             {"name":name,
             "type":type,
-            "parent":parent.concat(filename)},//data format array[0]:parent array[1]:grandparent (if exist) will not taking order and draft set them defaultly
+            "address":parent.concat(fileName)},
             {headers:{"authorization": "Bearer "+this.props.authToken}}).then( res =>
                 {this.setState({[this.state.oldMenu]:[this.state.newMenu]});
                 alert("Page/menu added successfully to this menu")}
@@ -315,9 +315,9 @@ class UpdateMenu extends React.Component{
                 this.setState({[this.state.newMenu]:[this.state.oldMenu]});
                 alert("Some error occurred CAN'T SAVE")
             }
-        )*/
+        )
     }
-    delete=(address)=>{
+    delete=(address,type)=>{
         // console.log(name);
         // console.log(parent);
         var nm=this.state.newMenu;
@@ -328,7 +328,7 @@ class UpdateMenu extends React.Component{
             for (let i = 0; i < nm.length; i++){
                 if(nm[i].link===address[0]){
                     nm[i].items=nm[i].items.filter(m=>m.link!==address[1])
-                    console.log(nm[i])
+                    //console.log(nm[i])
                 }    
             }
         }
@@ -338,14 +338,14 @@ class UpdateMenu extends React.Component{
                     for(let j=0;j<nm[i].items.length;j++)
                     if(nm[i].items[j].link===address[1]){
                     nm[i].items[j].items=nm[i].items[j].items.filter(m=>m.link!==address[2])
-                    console.log(nm[i])
+                    //console.log(nm[i])
                 }    
             }}
          }
          this.setState({newMenu:nm});
          console.log(address);
-        axios.delete(baseurl+"awesome-editor",
-            {address},
+        axios.delete(baseurl+"awesome-editor/filesystem",
+            {address,type},
             {headers:{"authorization": "Bearer "+this.props.authToken}}
         ).then(res=>
             alert("delete success") //then rerequest for structure of files TBD
@@ -353,10 +353,10 @@ class UpdateMenu extends React.Component{
                 err=>alert("some error occured")
         )
     }
-    update=(address,changes)=>{
+    update=(address,changes,type)=>{
         console.log(changes);
-        axios.put(baseurl+"awesome-editor",
-            {address,changes},//type
+        axios.patch(baseurl+"awesome-editor/filesystem",
+            {address,changes,type},//type
             {headers:{"authorization": "Bearer "+this.props.authToken}}
         ).then(
             res=>{
@@ -376,16 +376,16 @@ class UpdateMenu extends React.Component{
                         Menu.map(menuitem => {
                             if(menuitem.type==="menu"){
                                 return  <li> <> {menuitem.name} </>
-                                                <DeleteButton address={parent.concat(menuitem.link)} delete={this.delete}/>
-                                                <UpdateButton address={parent.concat(menuitem.link)} toggle={this.toggleUpdatePopup} lastclicked={this.changeLastClick} order={menuitem.order} draft={menuitem.draft} name={menuitem.name}/>
+                                                <DeleteButton address={parent.concat(menuitem.link)} delete={this.delete} type="menu"/>
+                                                <UpdateButton address={parent.concat(menuitem.link)} toggle={this.toggleUpdatePopup} lastclicked={this.changeLastClick} order={menuitem.order} draft={menuitem.draft} name={menuitem.name} type="menu" />
                                                 <AddButton parent={parent.concat(menuitem.link)} toggle={this.toggleAddPopup} lastclicked={this.changeLastClick}/>
                                              {this.createMenu(menuitem.items,parent.concat(menuitem.link),level+1)}
                                         </li>
                                }
                             else{
                                 return <li> <>{menuitem.name}</>
-                                    <DeleteButton address={parent.concat(menuitem.link)} delete={this.delete}/>
-                                    <UpdateButton address={parent.concat(menuitem.link)} toggle={this.toggleUpdatePopup} lastclicked={this.changeLastClick} order={menuitem.order} draft={menuitem.draft} name={menuitem.name}/>
+                                    <DeleteButton address={parent.concat(menuitem.link)} delete={this.delete} type="page"/>
+                                    <UpdateButton address={parent.concat(menuitem.link)} toggle={this.toggleUpdatePopup} lastclicked={this.changeLastClick} order={menuitem.order} draft={menuitem.draft} name={menuitem.name} type="page"/>
                                 </li>
                             }
                             }
@@ -396,7 +396,15 @@ class UpdateMenu extends React.Component{
     }
     render(){
         return <div className="menucreator">
+            <div className="heading">
+                <h1>FileSystem</h1>
+                <div className="addbutton">
+                <AddButton  parent={[]} toggle={this.toggleAddPopup} lastclicked={this.changeLastClick}/>
+                </div>
+            </div>
+            <div className="menu">
             {this.createMenu(this.state.newMenu,[],0)}
+            </div>
             {
             this.state.addPopUp?
                 <AddPop close={this.toggleAddPopup} add={this.addToMenu} parent={this.state.lastclicked}/> : null
