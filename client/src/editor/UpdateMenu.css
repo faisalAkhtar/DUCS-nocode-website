@@ -68,3 +68,10 @@ li{
     float: right;
     margin-right:10px;
 }
+.up,.down,.save,.cancel,.move{
+    background-color: aliceblue;
+    width :fit-content;
+    font-size: large;
+    float: right;
+    margin-right:10px;
+}

@@ -2,7 +2,9 @@ import React from "react";
 import "./UpdateMenu.css"
 import axios from "axios";
 import {AddButton,DeleteButton,UpdateButton} from "./add";
-import {AddPop,UpdatePop} from "./Popup"
+import {AddPop,UpdatePop} from "./Popup";
+import ReorderMenu from "./reorderMenu";
+import { Route, Switch,withRouter } from "react-router";
 
 const baseurl="http://localhost:5000/"
 class UpdateMenu extends React.Component{
@@ -255,13 +257,14 @@ class UpdateMenu extends React.Component{
             ],
             addPopUp:false,
             updatePopUp:false,
-            lastclicked:{}
+            lastclicked:{},
+            isMove:false,
         }
     }
     changeLastClick=(arr)=>{
         this.setState({lastclicked:arr});
     }
-    ComponentDidMount(){
+    componentDidMount(){
         axios.get(baseurl+"awesome-editor/filesystem").then(
             res=>{
                 this.setState({oldMenu:res.data.Menu}); //change name of data object as provided in response
@@ -274,6 +277,9 @@ class UpdateMenu extends React.Component{
     }
     toggleUpdatePopup=()=>{
         this.setState({updatePopUp:!(this.state.updatePopUp)});
+    }
+    toggleMove=()=>{
+        this.props.history.push("/awesomeeditor/page/reorder");
     }
     addToMenu=(name,fileName,type,parent)=>{
         //make update in new menu
@@ -395,29 +401,39 @@ class UpdateMenu extends React.Component{
            
     }
     render(){
-        return <div className="menucreator">
-            <div className="heading">
-                <h1>FileSystem</h1>
-                <div className="addbutton">
-                <AddButton  parent={[]} toggle={this.toggleAddPopup} lastclicked={this.changeLastClick}/>
-                </div>
-            </div>
-            <div className="menu">
-            {this.createMenu(this.state.newMenu,[],0)}
-            </div>
-            {
-            this.state.addPopUp?
-                <AddPop close={this.toggleAddPopup} add={this.addToMenu} parent={this.state.lastclicked}/> : null
-            }
-            {
-            this.state.updatePopUp?
-                <UpdatePop close={this.toggleUpdatePopup} update={this.update} parent={this.state.lastclicked}/> : null
-            }
-        </div>
+        return <Switch baseurl="">
+                    <Route path="/awesomeeditor/page/reorder">
+                        <ReorderMenu toggleMove={this.toggleMove} newMenu={this.state.newMenu}/>
+                    </Route>
+                    <Route>
+                        <div className="menucreator">
+                            <div className="heading">
+                                <h1>FileSystem</h1>
+                                <div className="addbutton">
+                                    <button className="move" onClick={e=>this.toggleMove()}>Move</button>
+                                    <AddButton  parent={[]} toggle={this.toggleAddPopup} lastclicked={this.changeLastClick}/>
+                                 </div>
+                            </div>
+                            <div className="menu">
+                                {this.createMenu(this.state.newMenu,[],0)}
+                            </div>
+                            {this.state.addPopUp?
+                                <AddPop close={this.toggleAddPopup} add={this.addToMenu} parent={this.state.lastclicked}/> : null
+                            }
+                            {this.state.updatePopUp?
+                                <UpdatePop close={this.toggleUpdatePopup} update={this.update} parent={this.state.lastclicked}/> : null
+                            }
+                        </div>
+                    </Route>
+        </Switch>
+        
     }
 }
 
-export default UpdateMenu;
+export default withRouter(UpdateMenu);
 /* we want popup to have knowledge about the button clicked 
     -the only way we can have is to contain this information in state of the update menu component
-    -so we need to update this info from the button click to contain info about last clicked button */
+    -so we need to update this info from the button click to contain info about last clicked button 
+    
+      :
+    */
