@@ -29,7 +29,8 @@ exports.AddItemToDB = function (req, res, next) {
 
     let name = req.body.name.trim(),
         type = req.body.type,
-        address = req.body.address
+        address = req.body.address,
+        order = req.body.order
 
     if (!name)
         return res.status(400).json({ msg: "Invalid syntax" })
@@ -38,7 +39,7 @@ exports.AddItemToDB = function (req, res, next) {
     else if (address[0] === "index" || address[0] === "utils")
         return res.status(406).json({ msg: "Not Acceptable" })
 
-    FilesystemModal.add(name, type, address,
+    FilesystemModal.add(name, type, address, order,
         (err, result) => {
             if (err)
                 return res.status(500).json({ "msg": err })

@@ -82,11 +82,11 @@ exports.fileExists = function (address, type, callbackFunc) {
         )
 }
 
-exports.add = function (name, type, address, callbackFunc) {
+exports.add = function (name, type, address, order, callbackFunc) {
     let item = {
         type,
         name,
-        order: 9,
+        order
     }
     if (type === "page")
         item.draft = false
@@ -241,7 +241,7 @@ exports.changeFields = function (address, type, changes, callbackFunc) {
                     if (changes.link) subdoc.items[i2].link = changes.link
                     if (changes.draft && type === 'page') subdoc.items[i2].draft = changes.draft
 
-                    doc.items[i1].items = subdoc
+                    doc.items[i1].items = subdoc.items
                     filesystemCollection.updateOne(
                         { link: address[0] },
                         { $set: { items: doc.items } },
@@ -279,7 +279,7 @@ exports.changeOrder = function (newOrder, callbackFunc) {
                 }
                 docs[it].order = newOrder[it].order
 
-                if (docs[it].type === 'menu') {
+                if (docs[it].type === 'menu' && docs[it].items) {
                     docs[it].items.sort(sorterFunc)
                     newOrder[it].items.sort(sorterFunc)
                     for (let jt = 0; jt < docs[it].items.length; jt++) {
@@ -288,7 +288,7 @@ exports.changeOrder = function (newOrder, callbackFunc) {
                         }
                         docs[it].items[jt].order = newOrder[it].items[jt].order
 
-                        if (docs[it].items[jt].type === 'menu') {
+                        if (docs[it].items[jt].type === 'menu' && docs[it].items[jt].items) {
                             docs[it].items[jt].items.sort(sorterFunc)
                             newOrder[it].items[jt].items.sort(sorterFunc)
                             for (let kt = 0; kt < docs[it].items[jt].items.length; kt++) {
