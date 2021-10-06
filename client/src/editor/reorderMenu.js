@@ -200,11 +200,13 @@ class ReorderMenu extends React.Component{
                             if(menuitem.type==="menu"){
                                 return  <li> <> {menuitem.name} </>
                                         {menuitem.order!==Menu.length?
-                                            <button className="down" onClick={e=>this.down(menuitem,Menu.find(mi=>mi.order===menuitem.order+1))}>Down</button>
+                                            <button className="down" onClick={e=>this.down(menuitem,Menu.find(mi=>mi.order===menuitem.order+1))}> &#8595;
+                                            </button>
                                             : null
                                         }
                                         {menuitem.order!==1?
-                                            <button className="down" onClick={e=>this.up(menuitem,Menu.find(mi=>mi.order===menuitem.order-1))}>Up</button>
+                                            <button className="down" onClick={e=>this.up(menuitem,Menu.find(mi=>mi.order===menuitem.order-1))}> &#8593;
+                                            </button>
                                             : null
                                         }   
                                         {this.createMenu(menuitem.items,parent.concat(menuitem.link),level+1)}
@@ -213,11 +215,13 @@ class ReorderMenu extends React.Component{
                             else{
                                 return <li> <>{menuitem.name}</>
                                    {menuitem.order!==Menu.length?
-                                            <button className="down" onClick={e=>this.down(menuitem,Menu.find(mi=>mi.order===menuitem.order+1))}>Down</button>
+                                            <button className="down" onClick={e=>this.down(menuitem,Menu.find(mi=>mi.order===menuitem.order+1))}> &#8595;
+                                            </button>
                                             : null
                                         }
                                         {menuitem.order!==1?
-                                            <button className="down" onClick={e=>this.up(menuitem,Menu.find(mi=>mi.order===menuitem.order-1))}>Up</button>
+                                            <button className="down" onClick={e=>this.up(menuitem,Menu.find(mi=>mi.order===menuitem.order-1))}> &#8593;
+                                            </button>
                                             : null
                                         } 
                                 </li>
