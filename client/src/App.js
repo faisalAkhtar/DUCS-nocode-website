@@ -3,6 +3,7 @@ import Header from './default/Header';
 import Footer from './default/Footer';
 import Page from './default/Page';
 //import Notifications from './default/Notifications';
+
 function App() {
   return (
       <div>
