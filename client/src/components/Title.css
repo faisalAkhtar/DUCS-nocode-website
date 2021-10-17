@@ -1,0 +1,9 @@
+.title{
+    float: left;
+    text-align: center;
+    font-size: large;
+    color: rgb(161, 161, 161);
+    display: block;
+    border-bottom: 2px black solid;
+    width: 100%;
+}

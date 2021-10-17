@@ -15,7 +15,7 @@
     display: inline-block;
     width: 100%;
 }
-h1{
+.head{
     /* float: left; */
     padding-left: 10px;
     margin: 10px;

@@ -261,7 +261,7 @@ class UpdateMenu extends React.Component {
         <Route>
           <div className="menucreator">
             <div className="heading">
-              <h1>FileSystem</h1>
+              <h1 className="head">FileSystem</h1>
               <div className="addbutton">
                 <button className="move" onClick={(e) => this.toggleMove()}>
                   Move
