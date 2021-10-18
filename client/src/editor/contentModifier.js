@@ -13,10 +13,16 @@ class Editor extends React.Component {
       selected: -1,
     };
   }
+  shouldComponentUpdate(nextProps,nextState){ //preventing default rerendering on state change
+    return !this.equals(nextState,this.state);
+  }
+  equals=(next,current)=>{
+    return next===current;
+  }
   addComp = (event) => {
     var index = event.target.id;
     index = index.substring(3); //remove add from id
-    this.setState({ addIndex: parseInt(index) });
+    this.setState({ addIndex: parseInt(index) },()=>{this.render()});
   };
   itemSelected = (index) => {
     //console.log(index);
@@ -30,9 +36,9 @@ class Editor extends React.Component {
       var Element=file[this.state.selected];
       Element=<Title id={modifierState.id}>{modifierState.value}</Title>
       file[this.state.selected]=Element;
-      this.setState({file});
+      this.setState({file},()=>{this.render();});
   }
-  addLine = (i) => {
+  addLine = (i) => {  //function to make add button after each component
     return (
       <div className="addComponentContainer">
         <div className="addComponent">
@@ -50,7 +56,7 @@ class Editor extends React.Component {
       </div>
     );
   };
-  displayFile = () => {
+  displayFile = () => { //function to display whole file in modifiable form
     return this.state.file.map((item, index) => {
       return (
         <div className="item">
@@ -72,15 +78,16 @@ class Editor extends React.Component {
   componentClicked = (event) => {
     if (this.state.addIndex < 0) return;
     var file = this.state.file;
+    var selected=this.state.addIndex;
     switch (event.target.id) {
       case "title":
         file.splice(this.state.addIndex, 0, <Title id="Main-title"> Title For page</Title>);
-        this.setState(file);
         console.log(file);
         break;
     }
-    this.setState({ selected : this.state.addIndex },()=>{this.render()});
-    this.setState({ addIndex: -1 },()=>{this.render()});
+    this.setState({file,selected,addIndex:-1},()=>{this.render()});
+    // this.setState({ selected : this.state.addIndex },()=>{this.render()});
+    // this.setState({ addIndex: -1 },()=>{this.render()});
   };
   // componentDidMount(){
   //   axios.get(baseurl+""//addfilename here).then(
@@ -93,7 +100,6 @@ class Editor extends React.Component {
   //   )
   // }
   render() {
-    console.log("render app");
     return (
       <div className="editorcontainer">
         <div className="editorHeader">
