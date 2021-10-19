@@ -17,16 +17,26 @@ class Editor extends React.Component {
     return !this.equals(nextState,this.state);
   }
   equals=(next,current)=>{
-    return next===current;
+    console.log(next)
+    console.log(current)
+    if(next.addIndex!==-1 || next.selected===current.selected)  //no issues in these cases u can directly rerender on state change
+      return false;
+    if(next.selected!==current.selected && next.addIndex===current.addIndex)
+      return false;
+    if(next.file.length!==current.file.length && next.selected===current.addIndex)
+      return false;
+    return true;
+
+    //return next===current;
   }
   addComp = (event) => {
     var index = event.target.id;
     index = index.substring(3); //remove add from id
-    this.setState({ addIndex: parseInt(index) },()=>{this.render()});
+    this.setState({ addIndex: parseInt(index) },()=>{console.log("state updates");this.render()});
   };
   itemSelected = (index) => {
     //console.log(index);
-    this.setState({ selected: parseInt(index) },()=>{console.log("from callback "+this.state.selected);this.render()}); //id of selected component on display page
+    this.setState({ addIndex:-1,selected: parseInt(index) },()=>{console.log("from callback "+this.state.selected);this.render()}); //id of selected component on display page
     //id is same as index of element in file array
 
     // document.getElementById(event.target.id).style.boxShadow="3px 3px grey";
@@ -77,7 +87,7 @@ class Editor extends React.Component {
 
   componentClicked = (event) => {
     if (this.state.addIndex < 0) return;
-    var file = this.state.file;
+    var file = [...this.state.file];
     var selected=this.state.addIndex;
     switch (event.target.id) {
       case "title":
@@ -100,6 +110,7 @@ class Editor extends React.Component {
   //   )
   // }
   render() {
+    console.log("render");
     return (
       <div className="editorcontainer">
         <div className="editorHeader">
