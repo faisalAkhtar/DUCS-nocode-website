@@ -16,7 +16,15 @@ exports.GetFileContents = function (req, res, next) {
                 return res.status(400).send({ msg: 'Error fetching file\'s contents' })
             }
 
-            return res.send(data)
+            let json = (function (raw) {
+                try {
+                    return JSON.parse(raw)
+                } catch (err) {
+                    return data
+                }
+            })(data)
+
+            return res.send(json)
         }
     )
 }
@@ -31,7 +39,7 @@ exports.UpdateFileContents = function (req, res, next) {
 
     fs.writeFile(
         path.join(__dirname + itempath),
-        data,
+        JSON.stringify(data),
         (err) => {
             if (err) {
                 console.log(err)
