@@ -45,28 +45,19 @@ li{
     padding: 10px;
     
 }
-.add {
+.add,.delete,.update {
     background-color: aliceblue;
-    width :fit-content;
+    display: block;
     font-size: large;
-    float: right;
+    margin :0px;
+    /* float: right;
     margin-right: 10px;
-    margin-top: auto;
+    margin-top: auto; */
     /* background-image: ; */
-    border-radius: 50%;
+    /* border-radius: 50%; */
 }
-.delete{
-    background-color: aliceblue;
-    width :fit-content;
-    font-size: large;
-    float: right;
-}
-.update{
-    background-color: aliceblue;
-    width :fit-content;
-    font-size: large;
-    float: right;
-    margin-right:10px;
+.add:hover,.delete:hover,.update:hover{
+    background-color: #dafaff;
 }
 .up,.down,.save,.cancel,.move{
     background-color: aliceblue;
@@ -74,4 +65,38 @@ li{
     font-size: large;
     float: right;
     margin-right:10px;
+}
+.editbuttons{
+    /* position: relative; */
+    width: 10%;
+    background-color: inherit;
+    float: right;
+    border: none;
+    color :#aaa;
+    margin-right: 10px;
+    /* text-align: center; */
+    
+}
+.editbuttons:hover .editoptions{
+    display:inline-block;
+}
+.editbuttonsdropdown{
+    /* width: 100%; */
+    background-color: inherit;
+    /* float: right; */
+    border: none;
+    display: block;
+    color :#aaa;
+    text-align: center;
+    
+}
+.editbuttonsdropdown:hover{
+    color: #666;
+    /* border:#aaa solid 1px;
+    border-radius: 50%; */
+}
+.editoptions{
+    display: none;
+    /* width: 100%; */
+    z-index: 50;
 }
