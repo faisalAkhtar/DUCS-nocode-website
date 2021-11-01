@@ -2,7 +2,7 @@ import React from "react";
 import { Switch, Route, withRouter } from "react-router-dom";
 import "./admin.css";
 import UpdateMenu from "./UpdateMenu";
-import Editor from "./contentModifier";
+import Editor from "./contentModifier2";
 
 class App extends React.Component {
   action = (name) => {

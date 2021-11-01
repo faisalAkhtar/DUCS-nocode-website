@@ -8,13 +8,13 @@ class TitlePropertyModifier extends React.Component {
       //figure out if passing that element object directly works better or not or even works or not
       //--- edit dont works props are non modifiable
       // title:this.props.title,
-      id: this.props.title.props.id,
+      id: this.props.title.id,
       value: this.props.title.props.children,
     };
   }
   componentDidUpdate(prevProps) {
     if (prevProps.title !== this.props.title) {
-        this.setState({ value: this.props.title.props.children,id: this.props.title.props.id });
+        this.setState({ value: this.props.title.props.children,id: this.props.title.id });
     }
   }
   valueChange = (event) => {

@@ -67,7 +67,7 @@ li{
     margin-right:10px;
 }
 .editbuttons{
-    /* position: relative; */
+    position: relative;
     width: 10%;
     background-color: inherit;
     float: right;
@@ -81,6 +81,7 @@ li{
     display:inline-block;
 }
 .editbuttonsdropdown{
+    cursor: pointer;
     /* width: 100%; */
     background-color: inherit;
     /* float: right; */
@@ -97,6 +98,6 @@ li{
 }
 .editoptions{
     display: none;
-    /* width: 100%; */
+    position: absolute;
     z-index: 50;
 }

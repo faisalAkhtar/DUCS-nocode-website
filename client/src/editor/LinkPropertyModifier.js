@@ -6,14 +6,14 @@ class ParagraphPropertyModifier extends React.Component {
     super(props);
     console.log(this.props.object);
     this.state = {
-      id: this.props.object.props.id,
+      id: this.props.object.id,
       text: this.props.object.props.children,
       link: this.props.object.props.href,
     };
   }
   componentDidUpdate(prevProps) {
     if (prevProps.object !== this.props.object) {
-        this.setState({ text: this.props.object.props.children,link: this.props.object.props.href,id: this.props.object.props.id });
+        this.setState({ text: this.props.object.props.children,link: this.props.object.props.href,id: this.props.object.id });
     }
   }
   valueChange = (event) => {
