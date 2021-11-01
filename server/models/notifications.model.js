@@ -1,8 +1,19 @@
 var db = require('../utils/db')
 
-exports.list = function (categoryOfNotifications, callbackFunc, noOfNotifications) {
+exports.categories = function (callbackFunc) {
+    var notificationCollection = db.get().collection('notifications')
+    notificationCollection
+        .find()
+        .project({ category: 1 })
+        .toArray((err, docs) => callbackFunc(err, docs))
+}
+
+exports.notifications = function (categoryOfNotifications, callbackFunc, noOfNotifications) {
     var notificationCollection = db.get().collection('notifications')
     notificationCollection
         .find({ category: categoryOfNotifications })
-        .toArray((err, docs) => callbackFunc(err, docs))
+        .project({ _id: 0, notifications: 1 })
+        .toArray((err, docs) => {
+            callbackFunc(err, docs)
+        })
 }

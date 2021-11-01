@@ -6,6 +6,7 @@ const path = require('path')
 
 const AuthRouter = require('./routes/auth-route.config')
 const WebsiteRouter = require('./routes/website-route.config')
+const PublicAPIsRouter = require('./routes/public-apis-route.config')
 const FilesystemRouter = require('./routes/filesystem-route.config')
 const PageEditorRouter = require('./routes/page-editor-route.config')
 
@@ -31,6 +32,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 AuthRouter.routeConfig(app)
 WebsiteRouter.routeConfig(app)
+PublicAPIsRouter.routeConfig(app)
 FilesystemRouter.routeConfig(app)
 PageEditorRouter.routeConfig(app)
 
