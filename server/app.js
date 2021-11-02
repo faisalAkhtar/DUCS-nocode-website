@@ -5,10 +5,11 @@ const createError = require('http-errors')
 const path = require('path')
 
 const AuthRouter = require('./routes/auth-route.config')
-const WebsiteRouter = require('./routes/website-route.config')
-const PublicAPIsRouter = require('./routes/public-apis-route.config')
 const FilesystemRouter = require('./routes/filesystem-route.config')
+const ModifyNotificationsRouter = require('./routes/modify-notifications-route.config')
 const PageEditorRouter = require('./routes/page-editor-route.config')
+const PublicAPIsRouter = require('./routes/public-apis-route.config')
+const WebsiteRouter = require('./routes/website-route.config')
 
 const app = express()
 app.use(function (req, res, next) {
@@ -31,10 +32,11 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
 AuthRouter.routeConfig(app)
-WebsiteRouter.routeConfig(app)
-PublicAPIsRouter.routeConfig(app)
 FilesystemRouter.routeConfig(app)
+ModifyNotificationsRouter.routeConfig(app)
 PageEditorRouter.routeConfig(app)
+PublicAPIsRouter.routeConfig(app)
+WebsiteRouter.routeConfig(app)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
