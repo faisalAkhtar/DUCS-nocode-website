@@ -1,7 +1,8 @@
 const NotificationModel = require('../models/notifications.model')
+const NotificationCategoriesModel = require('../models/notification-categories.model')
 
 exports.GetCategories = function (req, res, next) {
-	NotificationModel.categories(
+	NotificationCategoriesModel.categories(
 		(err, docs) => {
 			if (err)
 				return res.status(500).json({ "msg": err })
