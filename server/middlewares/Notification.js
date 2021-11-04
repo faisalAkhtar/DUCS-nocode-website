@@ -8,7 +8,7 @@ function formatDate(date) {
 	return year + '-' + (mon > 9 ? mon : '0' + mon) + '-' + (day > 9 ? day : '0' + day)
 }
 
-exports.ValidateAddNotificationBody = function (req, res, next) {
+exports.ValidateNotificationRequestBody = function (req, res, next) {
 	let category = req.body.category,
 		details = req.body.details,
 		uploadDate = new Date(),
@@ -49,7 +49,7 @@ exports.ValidateAddNotificationBody = function (req, res, next) {
 	}
 	if (err !== "") return res.status(400).json({ msg: err })
 
-	req.body.id = crypto.randomBytes(12).toString('hex')
+	req.body.newId = crypto.randomBytes(12).toString('hex')
 
     return next()
 }

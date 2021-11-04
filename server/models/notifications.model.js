@@ -39,6 +39,43 @@ exports.addNotification = function (id, category, uploadDate, expiryDate, newDat
     )
 }
 
+exports.updateNotification = function (id, category, uploadDate, expiryDate, newDate, links, details, callbackFunc) {
+    let item = {
+        id,
+        details,
+        uploadDate,
+        newDate,
+        expiryDate,
+        links
+    }
+
+    var notificationCollection = db.get().collection('notifications')
+    notificationCollection.findOne(
+        { category },
+        (err, doc) => {
+            if (err)
+                return callbackFunc(err, null)
+            if (!doc)
+                return callbackFunc('Category doesn\'t exist', null)
+
+            let temp = [...doc.notifications]
+            let ind = temp.findIndex(not => not.id === id)
+            if (ind < 0)
+                return callbackFunc('Invalid notification ID', null)
+            temp[ind] = item
+            if (temp[ind] === doc.notifications[ind])
+                return callbackFunc('Same values', null)
+            doc.notifications = temp
+
+            notificationCollection.updateOne(
+                { category },
+                { $set: { notifications: doc.notifications } },
+                (err, res) => callbackFunc(err, res)
+            )
+        }
+    )
+}
+
 exports.removeNotification = function (id, category, callbackFunc) {
     var notificationCollection = db.get().collection('notifications')
     notificationCollection.findOne(

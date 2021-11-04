@@ -28,6 +28,19 @@ exports.addCategory = function (category, callbackFunc) {
         })
 }
 
+exports.renameCategory = function (id, category, callbackFunc) {
+    var notificationCollection = db.get().collection('notifications')
+    notificationCollection.updateOne(
+        { _id: new mongo.ObjectId(id) },
+        { $set: { category } },
+        (err, result) => {
+            if (err)
+                return callbackFunc(err, null)
+            callbackFunc(err, result)
+        }
+    )
+}
+
 exports.removeCategory = function (id, callbackFunc) {
     var notificationCollection = db.get().collection('notifications')
     notificationCollection.deleteOne(

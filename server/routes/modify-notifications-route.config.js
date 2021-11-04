@@ -8,6 +8,11 @@ exports.routeConfig = function (app) {
         NotificationModifierController.AddCategory
     ])
 
+    app.put('/notifications/category', [
+        ValidationMiddleware.validateJWT,
+        NotificationModifierController.RenameCategory
+    ])
+
     app.delete('/notifications/category/:id', [
         ValidationMiddleware.validateJWT,
         NotificationModifierController.RemoveCategory
@@ -15,8 +20,14 @@ exports.routeConfig = function (app) {
 
     app.post('/notifications/notification', [
         ValidationMiddleware.validateJWT,
-        NotificationModifierMiddleware.ValidateAddNotificationBody,
+        NotificationModifierMiddleware.ValidateNotificationRequestBody,
         NotificationModifierController.AddNotification
+    ])
+
+    app.put('/notifications/notification', [
+        ValidationMiddleware.validateJWT,
+        NotificationModifierMiddleware.ValidateNotificationRequestBody,
+        NotificationModifierController.UpdateNotification
     ])
 
     app.delete('/notifications/notification', [
