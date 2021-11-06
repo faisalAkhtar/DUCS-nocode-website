@@ -19,7 +19,7 @@ class App extends React.Component {
     return (
       <Switch>
         <Route path="/awesomeeditor/editFile">
-          <Editor />
+          <Editor authToken={this.props.authToken}/>
         </Route>
         <Route path="/awesomeeditor">
           <div className="container">

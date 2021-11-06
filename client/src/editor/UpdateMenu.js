@@ -187,7 +187,8 @@ class UpdateMenu extends React.Component {
   };
   openInEditor=(filename)=>{
     // window.location.href
-    this.props.history.push("/awesomeeditor/editfile/" +filename);
+    console.log(filename)
+    this.props.history.push("/awesomeeditor/editfile/" +filename.join("/"));
   }
   createMenu = (Menu, parent, level) => {
     if (!Array.isArray(Menu)) return null;
@@ -233,7 +234,7 @@ class UpdateMenu extends React.Component {
             return (
               <li key={menuitem.link}>
                 {" "}
-                <p onDoubleClick={(e)=>this.openInEditor(menuitem.link)} style={{display:"inline"}}>{menuitem.name}</p>
+                <p onDoubleClick={(e)=>this.openInEditor(parent.concat(menuitem.link))} style={{display:"inline"}}>{menuitem.name}</p>
                 <div className="editbuttons">
                 <button className="editbuttonsdropdown">&#10247;</button>
                 <div className="editoptions">

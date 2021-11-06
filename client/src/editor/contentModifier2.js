@@ -8,13 +8,16 @@ import axios from "axios";
 import Paragraph from "../components/Paragraph";
 import Link from "../components/Link";
 import Image from "../components/Image";
-import Table from "../components/Table";
+// import Table from "../components/Table";
 import ImagePropertyModifier from "./ImagePropertyModifier";
-import TablePropertyModifier from "./TablePropertyModifier";
+// import TablePropertyModifier from "./TablePropertyModifier";
 import crypto from "crypto";
 import PreviewPopup from "./PreviewPopup";
 import Div from "../components/Div";
 import DivModifier from "./DivModifier";
+
+
+const baseurl="http://localhost:5000/";
 
 class Editor extends React.Component {
   constructor(props) {
@@ -137,23 +140,23 @@ class Editor extends React.Component {
       this.render();
     });
   };
-  tableComponentModifier = (modifierState) => {
-    var file = this.state.file;
-    var Element = file[this.state.selected];
-    Element = (
-      <Table
-        id={modifierState.id}
-        rows={modifierState.rows}
-        cols={modifierState.cols}
-      >
-        {modifierState.children}
-      </Table>
-    );
-    file[this.state.selected] = Element;
-    this.setState({ file }, () => {
-      this.render();
-    });
-  };
+  // tableComponentModifier = (modifierState) => {
+  //   var file = this.state.file;
+  //   var Element = file[this.state.selected];
+  //   Element = (
+  //     <Table
+  //       id={modifierState.id}
+  //       rows={modifierState.rows}
+  //       cols={modifierState.cols}
+  //     >
+  //       {modifierState.children}
+  //     </Table>
+  //   );
+  //   file[this.state.selected] = Element;
+  //   this.setState({ file }, () => {
+  //     this.render();
+  //   });
+  // };
   divComponentModifier = (modifierState) => {
     // var file = this.state.file;
     // var Element = file[this.state.selected];
@@ -328,14 +331,14 @@ class Editor extends React.Component {
           />
         );
         break;
-      case "table":
-        return (
-          <TablePropertyModifier
-            object={selectedobject}
-            work={this.tableComponentModifier}
-          />
-        );
-        break;
+      // case "table":
+      //   return (
+      //     <TablePropertyModifier
+      //       object={selectedobject}
+      //       work={this.tableComponentModifier}
+      //     />
+      //   );
+      //   break;
       case "div":
         return (
           <DivModifier
@@ -349,16 +352,35 @@ class Editor extends React.Component {
   togglePreviewPopup = () => {
     this.setState({ previewPopup: !this.state.previewPopup });
   };
-  // componentDidMount(){
-  //   axios.get(baseurl+""//addfilename here).then(
-  //     {
-  //       //set file in state with response data
-  //     }
-  //   )
-  //   .catch(
-  //     //some error happened while loading file reload file
-  //   )
-  // }
+  componentDidMount(){
+    var address=window.location.pathname;
+    address=address.split("/");
+    address.splice(0,3);
+    console.log(address);
+    console.log(baseurl);
+    axios.post(baseurl+"awesome-editor/file-editor",{address,type:"page"},
+    { headers: { authorization: "Bearer " + this.props.authToken } }).then(
+      (res)=>{
+        if(Array.isArray(res.data))
+        this.setState({file:res.data})}
+    )
+    .catch(
+      (err)=>{console.log(err.response.data);}
+    )
+  }
+  save=()=>{
+    var address=window.location.pathname;
+    address=address.split("/");
+    address.splice(0,3);
+    axios.put(baseurl+"awesome-editor/file-editor",{address,type:"page",data:this.state.file},
+    { headers: { authorization: "Bearer " + this.props.authToken } }).then(
+      (res)=>{console.log(res);
+      alert("file saved successfully");}
+    )
+    .catch(
+      (err)=>{console.log(err.response.data);}
+    )
+  }
   render() {
     console.log("render");
     return (
@@ -371,7 +393,7 @@ class Editor extends React.Component {
         ) : null}
         <div className="editorHeader">
           <p className="fileNameText">filename</p>
-          <button id="savefile" className="saveFileButton">
+          <button id="savefile" className="saveFileButton" onClick={(e)=>this.save()}>
             Save
           </button>
           <button
