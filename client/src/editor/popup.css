@@ -63,7 +63,7 @@
   border-radius: 10px;
   /* font-size: x-large; */
 }
-.preview-popup-content button{
+.closePreviewPopup{
     background: none;
     border: none;
     color: white;

@@ -1,4 +1,5 @@
 import React from "react";
+import ReactHtmlParser from "react-html-parser";
 import "./Title.css";
 
 class Paragraph extends React.Component {
@@ -6,7 +7,7 @@ class Paragraph extends React.Component {
     super(props);
   }
   render() {
-    return <p className="paragraph" id={this.props.id}>{this.props.children}</p>;
+    return <p className="paragraph" id={this.props.id}>{ReactHtmlParser(this.props.children)}</p>;
   }
 }
 export default Paragraph;

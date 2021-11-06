@@ -9,6 +9,8 @@ import Link from "../components/Link";
 import Paragraph from "../components/Paragraph";
 import Title from "../components/Title";
 import "./popup.css";
+import Table from "../components/Table";
+import ImageGallery from "../components/ImageGallery";
 
 class PreviewPopup extends React.Component {
   constructor(props) {
@@ -37,6 +39,8 @@ class PreviewPopup extends React.Component {
             {item.props.children}
           </Div>
         ),
+        table:(<Table id={item.id} rows={item.props.rows} cols={item.props.cols}>{item.props.children}</Table>),
+        imageGallery:<ImageGallery id={item.id} imageLinks={item.props.imageLinks}/>
       }[item.type]
     })
   }
@@ -48,9 +52,9 @@ class PreviewPopup extends React.Component {
             <button className="closePreviewPopup" onClick={(e)=>this.props.close()}>&#10006;</button>
           <Header />
           <Menu />
-          <div>
-            {this.display(this.props.page)}
-            {/* { <Notifications/> } */}
+          <div style={{width:"100%",display:"inline-block",padding:"10px"}}>
+            <div style={{width:"60%",display:"inline-block",}}>{this.display(this.props.page)}</div>
+            <Notifications/>
           </div>
           <Footer />
         </div>

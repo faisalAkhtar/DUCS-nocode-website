@@ -10,13 +10,13 @@ class ParagraphPropertyModifier extends React.Component {
       //--- edit dont works props are non modifiable
       //props.object:this.props.object,
       id: this.props.object.id,
-      value: this.props.object.props.children,
+      value: this.props.object.props.children.replaceAll("<br>","\n"),
       css:this.props.object.props.css,
     };
   }
   componentDidUpdate(prevProps) {
     if (prevProps.object !== this.props.object) {
-        this.setState({ value: this.props.object.props.children,id: this.props.object.id,css:this.props.object.props.css });
+        this.setState({ value: this.props.object.props.children.replaceAll("<br>","\n"),id: this.props.object.id,css:this.props.object.props.css });
     }
   }
   valueChange = (event) => {
