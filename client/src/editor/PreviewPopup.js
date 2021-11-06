@@ -34,7 +34,7 @@ class PreviewPopup extends React.Component {
         ),
         div: (
           <Div id={item.id} css={item.props.css}>
-            {this.display(item.props.children)}
+            {item.props.children}
           </Div>
         ),
       }[item.type]

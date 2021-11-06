@@ -226,10 +226,10 @@ class Editor extends React.Component {
                   <Paragraph id={item.id}>{item.props.children}</Paragraph>
                 ),
                 div: (
-                  <Div id={item.id} css={item.props.css}>
-                    {this.addLine(0,item.props.children)}
-                    {this.displayFile(item.props.children)}
-                  </Div>
+                  // <Div id={item.id} css={item.props.css}>
+                    <>{this.addLine(0,item.props.children)}
+                    {this.displayFile(item.props.children)}</>
+                  // </Div>
                 ),
               }[item.type]
             }{
