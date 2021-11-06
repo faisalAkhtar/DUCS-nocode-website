@@ -127,6 +127,11 @@ img {
 .addComponentButton:active {
   background-color: #eee;
 }
+div[class^='item']{
+  display: inline-block;
+  width: 100%;
+  float: left;
+}
 .item {
   display: inline-block;
   width: 100%;

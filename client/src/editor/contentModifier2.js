@@ -8,16 +8,17 @@ import axios from "axios";
 import Paragraph from "../components/Paragraph";
 import Link from "../components/Link";
 import Image from "../components/Image";
-// import Table from "../components/Table";
+import Table from "../components/Table";
 import ImagePropertyModifier from "./ImagePropertyModifier";
-// import TablePropertyModifier from "./TablePropertyModifier";
+import TablePropertyModifier from "./TablePropertyModifier";
 import crypto from "crypto";
 import PreviewPopup from "./PreviewPopup";
 import Div from "../components/Div";
 import DivModifier from "./DivModifier";
+import ImageGallery from "../components/ImageGallery";
+import ImageGalleryModifier from "./ImageGalleryModifier";
 
-
-const baseurl="http://localhost:5000/";
+const baseurl = "http://localhost:5000/";
 
 class Editor extends React.Component {
   constructor(props) {
@@ -26,7 +27,7 @@ class Editor extends React.Component {
       file: [],
       addIndex: -1,
       selected: -1,
-      itemSelect: null,
+      itemSelect: null,//selected item 
       previewPopup: false,
     };
   }
@@ -35,8 +36,8 @@ class Editor extends React.Component {
     return !this.equals(nextState, this.state);
   }
   equals = (next, current) => {
-    console.log(next);
-    console.log(JSON.stringify(current));
+    // console.log(next);
+    // console.log(JSON.stringify(current));
 
     if (next.addIndex !== -1 || next.selected === current.selected)
       //no issues in these cases u can directly rerender on state change
@@ -56,35 +57,47 @@ class Editor extends React.Component {
     //return next===current;
   };
   addComp = (event, fileToAdd) => {
-    var index = event.target.id;
     event.stopPropagation();
+    var index = event.target.id;
     index = index.substring(3); //remove add from id
+    console.log("printing current selected item from add comp")
+    console.log(this.state.itemSelect)
+    if (this.state.itemSelect) {
+      var oldId=this.state.itemSelect.id;
+      var el=document.getElementById("item"+oldId);
+      if(el)
+        el.className ="item selectItem";
+   }
     this.setState({ addIndex: parseInt(index), itemSelect: fileToAdd }, () => {
-      console.log("state updates");
-      console.log(this.state);
+      // console.log("state updates");
+      // console.log(this.state);
       this.render();
     });
   };
-  itemSelected = (event,index, item) => {
-    if(event) event.stopPropagation();
+  itemSelected = (event, index, item) => {
+    if (event) event.stopPropagation();
     // if(this!==event.target)
     //console.log(index);
     console.log("from item selection process");
     console.log(item);
-    // if (this.state.itemSelect) {
-    //   document.getElementById(this.state.selected).className =
-    //     "item selectItem";
-    // }
+    console.log(this.state.itemSelect)
+     if (this.state.itemSelect) {
+        var oldId=this.state.itemSelect.id;
+        var el=document.getElementById("item"+oldId);
+        if(el)
+          el.className ="item selectItem";
+     }
     //console.log(this.state.file[index].constructor.name);
     this.setState(
       { addIndex: -1, selected: parseInt(index), itemSelect: item },
       () => {
-        console.log("from callback " + this.state.selected);
+        console.log("printing current selected item from set state in item select")
+        console.log(this.state.itemSelect);
         this.render();
       }
     ); //id of selected component on display page
     //id is same as index of element in file array
-     document.getElementById(index).className = "item selectedItem";
+    document.getElementById("item"+item.id).className = "item selectedItem";
     // document.getElementById(index).style.borderRadius="10px";
     // document.getElementById(index).style.boxShadow="3px 3px grey";
   };
@@ -93,10 +106,10 @@ class Editor extends React.Component {
     // var Element = file[this.state.selected];
     // Element = <Title id={modifierState.id}>{modifierState.value}</Title>;
     // file[this.state.selected] = Element;
-    var selectedTitle=this.state.itemSelect;
-    selectedTitle.id=modifierState.id;
-    selectedTitle.props.children=modifierState.value;
-    this.setState({itemSelect:selectedTitle}, () => {
+    var selectedTitle = this.state.itemSelect;
+    selectedTitle.id = modifierState.id;
+    selectedTitle.props.children = modifierState.value;
+    this.setState({ itemSelect: selectedTitle }, () => {
       this.render();
     });
   };
@@ -107,10 +120,10 @@ class Editor extends React.Component {
     //   <Paragraph id={modifierState.id}>{modifierState.value}</Paragraph>
     // );
     // file[this.state.selected] = Element;
-    var selectedParagraph=this.state.itemSelect;
-    selectedParagraph.id=modifierState.id;
-    selectedParagraph.props.children=modifierState.value;
-    this.setState({ itemSelect : selectedParagraph }, () => {
+    var selectedParagraph = this.state.itemSelect;
+    selectedParagraph.id = modifierState.id;
+    selectedParagraph.props.children = modifierState.value.replaceAll("\n","<br>");
+    this.setState({ itemSelect: selectedParagraph }, () => {
       this.render();
     });
   };
@@ -123,52 +136,67 @@ class Editor extends React.Component {
     //   </Link>
     // );
     // file[this.state.selected] = Element;
-    var selectedLink=this.state.itemSelect;
-    selectedLink.id=modifierState.id;
-    selectedLink.props.href=modifierState.href;
-    selectedLink.props.children=modifierState.text;
-    this.setState({ itemSelect : selectedLink }, () => {
+    var selectedLink = this.state.itemSelect;
+    selectedLink.id = modifierState.id;
+    selectedLink.props.href = modifierState.href;
+    selectedLink.props.children = modifierState.text;
+    this.setState({ itemSelect: selectedLink }, () => {
       this.render();
     });
   };
   imageComponentModifier = (modifierState) => {
-    var selectedImage=this.state.itemSelect;
-    selectedImage.id=modifierState.id;
-    selectedImage.props.source=modifierState.value;
-    selectedImage.props.css=modifierState.css;
-    this.setState({ itemSelect : selectedImage }, () => {
+    var selectedImage = this.state.itemSelect;
+    selectedImage.id = modifierState.id;
+    selectedImage.props.source = modifierState.value;
+    selectedImage.props.css = modifierState.css;
+    this.setState({ itemSelect: selectedImage }, () => {
       this.render();
     });
   };
-  // tableComponentModifier = (modifierState) => {
-  //   var file = this.state.file;
-  //   var Element = file[this.state.selected];
-  //   Element = (
-  //     <Table
-  //       id={modifierState.id}
-  //       rows={modifierState.rows}
-  //       cols={modifierState.cols}
-  //     >
-  //       {modifierState.children}
-  //     </Table>
-  //   );
-  //   file[this.state.selected] = Element;
-  //   this.setState({ file }, () => {
-  //     this.render();
-  //   });
-  // };
+  tableComponentModifier = (modifierState) => {
+    //   var file = this.state.file;
+    //   var Element = file[this.state.selected];
+    //   Element = (
+    //     <Table
+    //       id={modifierState.id}
+    //       rows={modifierState.rows}
+    //       cols={modifierState.cols}
+    //     >
+    //       {modifierState.children}
+    //     </Table>
+    //   );
+    var selectedTable = this.state.itemSelect;
+    console.log(selectedTable);
+    selectedTable.props.rows = modifierState.rows;
+    selectedTable.props.cols = modifierState.cols;
+    selectedTable.props.children = modifierState.children;
+
+    //   file[this.state.selected] = Element;
+    this.setState({ itemSelect: selectedTable }, () => {
+      this.render();
+    });
+  };
   divComponentModifier = (modifierState) => {
     // var file = this.state.file;
     // var Element = file[this.state.selected];
     // Element = <Div id={modifierState.id}>{modifierState.children}</Div>;
     // file[this.state.selected] = Element;
-    var selectedDiv=this.state.itemSelect;
-    selectedDiv.id=modifierState.id;
-    selectedDiv.props.css=modifierState.css;
-    this.setState({ itemSelect : selectedDiv }, () => {
+    var selectedDiv = this.state.itemSelect;
+    selectedDiv.id = modifierState.id;
+    selectedDiv.props.css = modifierState.css;
+    this.setState({ itemSelect: selectedDiv }, () => {
       this.render();
     });
-    this.setCss(modifierState.css,selectedDiv.id)
+    this.setCss(modifierState.css, selectedDiv.id);
+  };
+  imageGalModifier=(modifierState)=>{
+    var selectedGallery = this.state.itemSelect;
+    selectedGallery.id = modifierState.id;
+    //selectedGallery.props.css = modifierState.css;
+    selectedGallery.props.imageLinks=modifierState.imageLinks;
+    this.setState({ itemSelect: selectedGallery }, () => {
+      this.render();
+    });
   };
   addLine = (i, fileToAdd) => {
     //function to make add button after each component
@@ -190,36 +218,49 @@ class Editor extends React.Component {
     );
   };
   itemFocusGained = (e, item) => {
-    this.setState({ itemSelect: item });
+    //this.setState({ itemSelect: item });
   };
-  setCss=(mycss,id)=>{
+  setCss = (mycss, id) => {
     var element = document.getElementsByClassName(id)[0];
-    console.log(element);
-    console.log(mycss);
-    console.log(id);
+    // console.log(element);
+    // console.log(mycss);
+    // console.log(id);
     if (element && mycss) {
       if (mycss.width) element.style.width = mycss.width;
       // if (mycss.height) element.style.height = mycss.height+"%";
     }
+  };
+  setTableStyle=(props,id)=>{
+    var element = document.getElementById("item"+id);
+    if (element && props) {
+      element.style.display="grid";
+      element.style.gridTemplateColumns="repeat("+props.cols+",1fr)";
+    }
   }
   displayFile = (file) => {
     //function to display whole file in modifiable form
-    if(!file || !Array.isArray(file) || file.length===0 )return null;
-    console.log(Array.isArray(file));
+    if (!file || !Array.isArray(file) || file.length === 0) return null;
+    console.log(file);
     return file.map((item, index) => {
       return (
-        <div className={"item-container "+item.id} key={index} >
+        <div className={"item-container " + item.id} key={index}>
           <div
             className={"item selectItem"}
-            id={index}
-            onClick={(e) => this.itemSelected(e,index, item)}
+            id={"item"+item.id}
+            onClick={(e) => this.itemSelected(e, index, item)}
             onFocus={(e) => this.itemFocusGained(e, item)}
           >
             {/* {console.log(item)} */}
             {
               {
                 title: <Title id={item.id}>{item.props.children}</Title>,
-                image: <Image id={item.id} source={item.props.source} css={item.props.css}/>,
+                image: (
+                  <Image
+                    id={item.id}
+                    source={item.props.source}
+                    css={item.props.css}
+                  />
+                ),
                 link: (
                   <Link id={item.id} href={item.props.href}>
                     {item.props.children}
@@ -230,14 +271,34 @@ class Editor extends React.Component {
                 ),
                 div: (
                   // <Div id={item.id} css={item.props.css}>
-                    <>{this.addLine(0,item.props.children)}
-                    {this.displayFile(item.props.children)}</>
+                  <>
+                    {console.log("from div"+item.type)}
+                    {this.addLine(0, item.props.children)}
+                    {this.displayFile(item.props.children)}
+                  </>
                   // </Div>
                 ),
+                table: (
+                  <>
+                  {/* {this.tablePropsSettings()} */}
+                  {/* {this.displayFile(item.props.children)} */}
+                    {item.type==="table" ? item.props.children.map((block,index) => {
+                      return <div id={block.id} className="item selectItem">
+                          {console.log("displaying block"+block.type)}
+                          {this.addLine(0, block.props.children)}
+                          {this.displayFile(block.props.children)}
+                        </div>
+                    })
+                  :null}
+                  {this.setTableStyle(item.props,item.id)}
+                  </>
+                ),
+                imageGallery:(
+                  <ImageGallery id={item.id} imageLinks={item.props.imageLinks} />
+                ),
               }[item.type]
-            }{
-              this.setCss(item.props.css,item.id)
             }
+            {this.setCss(item.props.css, item.id)}
             {/* .name==="Div"?this.displayFile(item.props.children):item} */}
           </div>
           {this.addLine(index + 1, file)}
@@ -245,17 +306,19 @@ class Editor extends React.Component {
       );
     });
   };
+  
   componentClicked = (event, itemType) => {
     //function to handle click for new component addition
     if (this.state.addIndex < 0) return;
     // var file = [...this.state.file];
-    var file=this.state.itemSelect;
+    var file = this.state.itemSelect;
     var selected = this.state.addIndex;
     var newElement = {};
     var id = crypto.randomBytes(8).toString("hex");
     newElement.id = itemType + id;
     newElement.type = itemType;
     newElement.props = {};
+    var r, c;
     switch (itemType) {
       case "title":
         newElement.props.children = "Title for page";
@@ -272,8 +335,11 @@ class Editor extends React.Component {
         newElement.props.children = "Your link";
         break;
       case "table":
-        newElement.props.rows = 0;
-        newElement.props.cols = 0;
+        r = parseInt(prompt("Enter number of rows for table"));
+        c = parseInt(prompt("Enter number of columns for table"));
+        newElement.props.rows = r;
+        newElement.props.cols = c;
+        newElement.props.children = [];
         // file.splice(
         //   this.state.addIndex,
         //   0,
@@ -281,23 +347,26 @@ class Editor extends React.Component {
         // );
         break;
       case "div":
-        newElement.props.css={width:"100%"};
-        newElement.props.children=[];
+        newElement.props.css = { width: "100%" };
+        newElement.props.children = [];
+        break;
+      case "imageGallery":
+        newElement.props.imageLinks=[];
         break;
     }
     file.splice(this.state.addIndex, 0, newElement);
     this.setState({ addIndex: -1 }, () => {
       this.render();
-      this.itemSelected(null,selected,newElement);
+      this.itemSelected(null, selected, newElement);
     });
     // this.setState({ selected : this.state.addIndex },()=>{this.render()});
     // this.setState({ addIndex: -1 },()=>{this.render()});
   };
   showModifiers = () => {
-    var selectedobject = this.state.itemSelect;//this.state.file[this.state.selected];
+    var selectedobject = this.state.itemSelect; //this.state.file[this.state.selected];
     //console.log(selectedobject);
-    if(!selectedobject) return <p>select something</p>;
-    console.log(selectedobject.type);
+    if (!selectedobject) return <p>select something</p>;
+    // console.log(selectedobject.type);
     switch (selectedobject.type) {
       case "title":
         return (
@@ -331,14 +400,14 @@ class Editor extends React.Component {
           />
         );
         break;
-      // case "table":
-      //   return (
-      //     <TablePropertyModifier
-      //       object={selectedobject}
-      //       work={this.tableComponentModifier}
-      //     />
-      //   );
-      //   break;
+      case "table":
+        return (
+          <TablePropertyModifier
+            object={selectedobject}
+            work={this.tableComponentModifier}
+          />
+        );
+        break;
       case "div":
         return (
           <DivModifier
@@ -347,42 +416,54 @@ class Editor extends React.Component {
           />
         );
         break;
+      case "imageGallery":
+        return (
+          <ImageGalleryModifier object={selectedobject} work={this.imageGalModifier}/>
+        );
+        break;
     }
   };
   togglePreviewPopup = () => {
     this.setState({ previewPopup: !this.state.previewPopup });
   };
-  componentDidMount(){
-    var address=window.location.pathname;
-    address=address.split("/");
-    address.splice(0,3);
+  componentDidMount() {
+    var address = window.location.pathname;
+    address = address.split("/");
+    address.splice(0, 3);
     console.log(address);
     console.log(baseurl);
-    axios.post(baseurl+"awesome-editor/file-editor",{address,type:"page"},
-    { headers: { authorization: "Bearer " + this.props.authToken } }).then(
-      (res)=>{
-        if(Array.isArray(res.data))
-        this.setState({file:res.data})}
-    )
-    .catch(
-      (err)=>{console.log(err.response.data);}
-    )
+    axios
+      .post(
+        baseurl + "awesome-editor/file-editor",
+        { address, type: "page" },
+        { headers: { authorization: "Bearer " + this.props.authToken } }
+      )
+      .then((res) => {
+        if (Array.isArray(res.data)) this.setState({ file: res.data });
+      })
+      .catch((err) => {
+        console.log(err.response.data);
+      });
   }
-  save=()=>{
-    var address=window.location.pathname;
-    address=address.split("/");
-    address.splice(0,3);
-    axios.put(baseurl+"awesome-editor/file-editor",{address,type:"page",data:this.state.file},
-    { headers: { authorization: "Bearer " + this.props.authToken } }).then(
-      (res)=>{console.log(res);
-      alert("file saved successfully");}
-    )
-    .catch(
-      (err)=>{console.log(err.response.data);}
-    )
-  }
+  save = () => {
+    var address = window.location.pathname;
+    address = address.split("/");
+    address.splice(0, 3);
+    axios
+      .put(
+        baseurl + "awesome-editor/file-editor",
+        { address, type: "page", data: this.state.file },
+        { headers: { authorization: "Bearer " + this.props.authToken } }
+      )
+      .then((res) => {
+        console.log(res);
+        alert("file saved successfully");
+      })
+      .catch((err) => {
+        console.log(err.response.data);
+      });
+  };
   render() {
-    console.log("render");
     return (
       <div className="editorcontainer">
         {this.state.previewPopup ? (
@@ -393,7 +474,11 @@ class Editor extends React.Component {
         ) : null}
         <div className="editorHeader">
           <p className="fileNameText">filename</p>
-          <button id="savefile" className="saveFileButton" onClick={(e)=>this.save()}>
+          <button
+            id="savefile"
+            className="saveFileButton"
+            onClick={(e) => this.save()}
+          >
             Save
           </button>
           <button
@@ -480,6 +565,17 @@ class Editor extends React.Component {
                       />
                       Div
                     </button>
+                    <button
+                      className="icon"
+                      onClick={(e) => this.componentClicked(e, "imageGallery")}
+                      id="imageGallery-icon"
+                    >
+                      <img
+                        src="https://i.fbcd.co/products/resized/resized-750-500/563d0201e4359c2e890569e254ea14790eb370b71d08b6de5052511cc0352313.jpg"
+                        alt="Scroll Gallery"
+                      />
+                      Image Gallery
+                    </button>
                   </div>
                 </div>
               ) : this.state.selected !== -1 ? (
@@ -490,7 +586,7 @@ class Editor extends React.Component {
             }
           </div>
           <div className="display">
-            {this.addLine(0,this.state.file)}
+            {this.addLine(0, this.state.file)}
             {this.displayFile(this.state.file)}
           </div>
         </div>
