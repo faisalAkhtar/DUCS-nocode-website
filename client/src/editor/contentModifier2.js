@@ -138,7 +138,7 @@ class Editor extends React.Component {
     // file[this.state.selected] = Element;
     var selectedLink = this.state.itemSelect;
     selectedLink.id = modifierState.id;
-    selectedLink.props.href = modifierState.href;
+    selectedLink.props.href = modifierState.link;
     selectedLink.props.children = modifierState.text;
     this.setState({ itemSelect: selectedLink }, () => {
       this.render();

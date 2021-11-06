@@ -257,7 +257,7 @@ class UpdateNotification extends React.Component {
             <div className="news-dates"><label>Expiry Date</label></div>
             <div></div>
           </div>
-          {this.state.notices.map((item, index) => {
+          {this.state.notices && this.state.notices.map((item, index) => {
             return (
               <div className="news-item editor-news-item" onClick={(e)=>this.selectNews(e,item)}>
                 <div className="news-detail">

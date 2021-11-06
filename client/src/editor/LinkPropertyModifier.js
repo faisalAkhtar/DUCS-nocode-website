@@ -30,7 +30,7 @@ class ParagraphPropertyModifier extends React.Component {
             type="text"
             name="link"
             onChange={(e) => this.valueChange(e)}
-            value={this.state.value}
+            value={this.state.link}
             wrap="none"
           />
         </label>
@@ -40,7 +40,7 @@ class ParagraphPropertyModifier extends React.Component {
             type="text"
             name="text"
             onChange={(e) => this.valueChange(e)}
-            value={this.state.value}
+            value={this.state.text}
             wrap="none"
           />
         </label>
