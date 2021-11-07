@@ -2,7 +2,7 @@ import Menu from './default/Menu'
 import Header from './default/Header';
 import Footer from './default/Footer';
 import Page from './default/Page';
-//import Notifications from './default/Notifications';
+import Notifications from './default/Notifications';
 
 function App() {
   return (
@@ -10,9 +10,9 @@ function App() {
         <Header/>
         {console.log(window.location.href)}
         <Menu/>
-        <div>
-          <Page/>
-          {/* <Notifications/> */}
+        <div style={{width:"100%",display:"inline-block",padding:"10px"}}>
+          <div style={{width:"60%",display:"inline-block",}}><Page/></div>
+          <Notifications/>
         </div>
         <Footer/>
       </div>
