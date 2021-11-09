@@ -3,6 +3,7 @@ import { Switch, Route, withRouter } from "react-router-dom";
 import "./admin.css";
 import UpdateMenu from "./UpdateMenu";
 import Editor from "./contentModifier2";
+import UpdateNotification from "./UpdateNotificaion";
 
 class App extends React.Component {
   action = (name) => {
@@ -39,6 +40,12 @@ class App extends React.Component {
                 Update Collections
               </button>
               <button
+                name="update-notifications"
+                onClick={(e) => this.action(e.target.name)}
+              >
+                Update Notifications
+              </button>
+              <button
                 name="update-page"
                 onClick={(e) => this.action(e.target.name)}
               >
@@ -60,8 +67,14 @@ class App extends React.Component {
                 <Route path="/awesomeeditor/help">
                   <h1> this is help page</h1>
                 </Route>
+                <Route path="/awesomeeditor/update-notifications">
+                  <UpdateNotification
+                  authToken={this.props.authToken}
+                  logout={this.logout}
+                  />
+                  {/* <h1> this is help page</h1> */}
+                </Route>
                 <Route path="/awesomeeditor">
-                  {/* <h1> this is update page page</h1> */}
                   <UpdateMenu
                     authToken={this.props.authToken}
                     logout={this.logout}

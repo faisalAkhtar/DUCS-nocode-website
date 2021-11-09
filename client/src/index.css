@@ -39,7 +39,7 @@ code {
   /* margin-right: 10px; */
   padding:2px;
 }
-.category-container button{
+.category{
   width: fit-content;
   border-radius: 30px;
   font-size: medium;

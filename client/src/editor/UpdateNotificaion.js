@@ -115,13 +115,13 @@ class UpdateNotification extends React.Component {
       .catch((err) => console.log(err));
   };
   addCategory=()=>{
-    var category=prompt("Enter name for new category:","New Category");
+    var name=prompt("Enter name for new category:","New Category");
     axios.post(baseurl+"notifications/category",
-      {category},
+      {name},
       { headers: { authorization: "Bearer " + this.props.authToken } }).then(
         (res)=>{
           var categories=this.state.categories;
-          categories.push({name:category,id:res.data.id});
+          categories.push({name,id:res.data.id});
           this.setState(categories);
         }
       ).catch((err)=>{
@@ -250,14 +250,7 @@ class UpdateNotification extends React.Component {
           </ul>
         </div>
         <div className="news">
-          <div className="editor-news-item">
-            <div className="news-detail"><label>Detail</label></div>
-            <div className="news-links"><label>Links</label></div>
-            <div className="news-dates"><label>New Date</label></div>
-            <div className="news-dates"><label>Expiry Date</label></div>
-            <div></div>
-          </div>
-          {this.state.notices && this.state.notices.map((item, index) => {
+          {this.state.notices.map((item, index) => {
             return (
               <div className="news-item editor-news-item" onClick={(e)=>this.selectNews(e,item)}>
                 <div className="news-detail">

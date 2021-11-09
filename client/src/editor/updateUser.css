@@ -1,0 +1,82 @@
+.add-new {
+  float: right;
+  width: fit-content;
+  font-size: larger;
+  border-radius: 100px;
+  margin-left: 10px;
+  margin-right: 15px;
+}
+.delete-news{
+    /* display:none; */
+    background-color: inherit;
+    width:50px;
+    border: none;
+    cursor: pointer;
+}
+.editor-news-item:hover{
+  cursor: pointer;
+}
+.editor-news-item{
+  display: grid;
+  grid-template-columns: repeat(6,1fr);
+  padding: 5px;
+  position: relative;
+  /* border-bottom: 1px solid lightslategrey; */
+}
+.news-detail{
+  grid-column: 1/4;
+  /* border-right: 1px solid lightslategray; */
+}
+.news-links,.news-dates{
+  margin: auto;
+  /* border-right: 1px solid lightslategray; */
+}
+.news-delete,.delete-links{
+  display:none;
+  margin: auto;
+}
+.news-links a,.news-links li{
+  font-size: small;
+  margin: 0px;
+  padding: 1px;
+  text-decoration: none;
+}
+.news-links a:hover{
+  text-decoration: underline;
+}
+.editor-news-item:hover .news-delete{
+    display:inline;
+    position: absolute;
+    right:10px;
+}
+/* .editor-news-item:hover .news-detail{
+  grid-column: 1/3;
+} */
+.modifiable-news button{
+  width: fit-content;
+  background-color: gainsboro;
+  margin-left: 10px;
+}
+.links-display{
+  position: relative;
+}
+.links-display button{
+  width: 40px;
+  background-color: white;
+}
+.links-display:hover .delete-links{
+  display: inline;
+  position: absolute;
+  right:10px;
+}
+.delete-category{
+  display: none;
+  width:30px;
+  background-color: white;
+  border:none;
+  margin:auto;
+
+}
+.category-list-item:hover .delete-category{
+  display: inline;
+}
