@@ -4,170 +4,106 @@ import axios from "axios";
 // import AddPop from "./Popup"
 import "./updateUser.css";
 
-const baseurl = process.env.REACT_BASEURL;
+const baseurl = "http://localhost:5000/";
 class UpdateNotification extends React.Component {
   constructor(props) {
     super(props);
-    // this.state={
-    //     categories:[],
-    //     notices:[],
-    // }
     this.state = {
-      categories: [
-        { name: "student", id: 1 },
-        { name: "faculty", id: 2 },
-        { name: "Admission", id: 3 },
-      ],
+      categories: [],
       selectedCategory:"",
-      notices: [
-        {
-          details:
-            "Interview for Appointment of Assistant Professor on Guest basis in the Department of Computer Science, University of Delhi, Delhi (Dated: August 31,2021)",
-          ExpiryDate:"20-10-2021",
-          newDate:"20-10-2021",
-          links: [
-            {
-              name: "Notice",
-              link: "http://cs.du.ac.in/uploads/student/Notice-fee-waiver-Covid-19.jpg",
-            },
-            {
-              name: "Schedule",
-              link: "http://cs.du.ac.in/uploads/guest-appointments/Schedule.pdf",
-            },
-          ],
-        },
-        {
-          details:
-            "Interview for Appointment of Assistant Professor on Guest basis in the Department of Computer Science, University of Delhi, Delhi (Dated: August 31,2021)",
-            ExpiryDate:"20-10-2021",
-            newDate:"20-10-2021",
-          links: [
-            {
-              name: "Notice",
-              link: "http://cs.du.ac.in/uploads/student/Notice-fee-waiver-Covid-19.jpg",
-            },
-            {
-              name: "Schedule",
-              link: "http://cs.du.ac.in/uploads/guest-appointments/Schedule.pdf",
-            },
-          ],
-        },
-        {
-          details:
-            "Extension of last date of the filling the form for Pre-admission preparation classes for candidates, from lesser privileged sections of the society, applying for Ph.D. (Computer Science) program for the academic year 2021-22 in the Department of Computer Science (Dated: August 24, 2021): ",
-            ExpiryDate:"20-10-2021",
-            newDate:"20-10-2021",
-          links: [
-            {
-              name: "abendum",
-              link: "http://cs.du.ac.in/uploads/admissions/2021-22/PhD/Pre-admission%20preparation%20classes-Call%20for%20Applications-Addendum.pdf",
-            },
-          ],
-        },
-        {
-          details:
-            "Revised Notice for Appointment of Assistant Professor on Guest basis in the Department of Computer Science, University of Delhi, Delhi (Dated: August 17, 2021)",
-            ExpiryDate:"20-10-2021",
-            newDate:"20-10-2021",
-          links: [
-            {
-              name: "Notice",
-              link: "http://cs.du.ac.in/uploads/guest-appointments/Revised-Notice-Guest-Faculty.pdf",
-            },
-            {
-              name: "Link to apply",
-              link: "https://docs.google.com/forms/d/e/1FAIpQLSdGby5rdD7yPFEiSISCcxHk9mutN5hTELneIO4wQJs8E0iP3g/viewform",
-            },
-          ],
-        },
-      ],
+      notices: [],
       modifiableNews:{
         id:"",
         links:[],
         detail:"",
-        ExpiryDate:"",
+        expiryDate:"",
         newDate:"",
       }
     };
   }
   fetchNotices = (category) => {
     axios
-      .get(baseurl + "api/notification", { category })
+      .get(baseurl + "api/notifications/"+category)
       .then((res) => {
-        console.log("response recieved");
-        console.log(res.data);
         this.setState({ notices: res.data , selectedCategory:category });
         this.reset();
       })
-      .catch((err) => console.log("error occurred"));
-      
+      .catch((err) => {
+        console.log("error occurred");
+      alert("some error occured please reload !!!");
+    });  
   };
   deleteNotice = (event, id) => {
     event.stopPropagation();
     axios
       .delete(baseurl + "notifications/notification", {
         headers: { authorization: "Bearer " + this.props.authToken },
-         data:{ id }})
+         data:{ id ,category:this.state.selectedCategory}})
       .then((res) => {
         alert("notice deleted successfully");
-        //   this.fetchNotices()
+        this.fetchNotices(this.state.selectedCategory);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err.response.data));
   };
   addCategory=()=>{
-    var name=prompt("Enter name for new category:","New Category");
+    var category=prompt("Enter name for new category:","New Category");
     axios.post(baseurl+"notifications/category",
-      {name},
+      {category},
       { headers: { authorization: "Bearer " + this.props.authToken } }).then(
         (res)=>{
           var categories=this.state.categories;
-          categories.push({name,id:res.data.id});
+          categories.push(res.data);
           this.setState(categories);
+          alert("Category added successfully")
         }
       ).catch((err)=>{
         alert("Can't save");
       })
   }
   deleteCategory=(id)=>{
-    axios.delete(baseurl+"notifications/notification",{ headers: { authorization: "Bearer " + this.props.authToken },data:{id}}).then(
+    axios.delete(baseurl+"notifications/category/"+id,{ headers: { authorization: "Bearer " + this.props.authToken }}).then(
       (res)=>{
         var categories=this.state.categories;
         categories=categories.filter((cat)=>cat.id!==id);
-        this.setState(categories);
+        this.setState({categories},()=>{console.log(this.state.categories);this.render();});
         this.reset();
+        alert("Delete Success");
       }
+    ).catch(
+      (err)=>console.log(err.response.data)
     )
   }
   selectNews=(event,newsItem)=>{
     event.stopPropagation();
-    console.log(newsItem)
+    //console.log(newsItem)
     var modifiableNews={};
     modifiableNews.id=newsItem.id;
     modifiableNews.links=JSON.parse(JSON.stringify(newsItem.links));
-    modifiableNews.ExpiryDate=newsItem.ExpiryDate;
+    modifiableNews.expiryDate=newsItem.expiryDate;
     modifiableNews.newDate=newsItem.newDate;
     modifiableNews.details=newsItem.details;
     this.setState({modifiableNews});
-    console.log(newsItem)
+    //console.log(newsItem)
   }
   reset=()=>{
     var modifiableNews={
       id:"",
       links:[],
       details:"",
-      ExpiryDate:"",
+      expiryDate:"",
       newDate:"",
     }
     this.setState({modifiableNews});
   }
   save=()=>{
-    if(this.state.modifiableNews.id===""){
-      var newNews=this.state.modifiableNews;
+    var newNews=this.state.modifiableNews;
       newNews.category=this.state.selectedCategory;
+    if(this.state.modifiableNews.id===""){
       axios.post(baseurl+"notifications/notification",newNews,
             { headers: { authorization: "Bearer " + this.props.authToken } }).then(
               (res)=>{
                 this.fetchNotices(this.state.selectedCategory);
+                alert("Saved")
               }
             ).catch(
               (err)=>{
@@ -183,27 +119,29 @@ class UpdateNotification extends React.Component {
               }
             ).catch(
               (err)=>{
+                console.log(err.response.data)
                 alert("error occurred");
               }
             )
     }
     
   }
-  /*ComponentDidMount(){
-        axios.get(baseurl).then(
+  componentDidMount(){
+        axios.get(baseurl+"api/categories").then(
             res=>{
-                this.setState({oldMenu:res.data.Menu}); //change name of data object as provided in response
-                this.setState({newMenu:oldMenu});
+                this.setState({categories:res.data,selectedCategory:res.data[0]}); 
+                this.fetchNotices(res.data[0].category);
             }
+        ).catch(
+          (err)=>console.log(err.response.data)
         )
-    }*/
+    }
     valueChanged=(event)=>{
       var modifiableNews=this.state.modifiableNews;
       modifiableNews[event.target.name]=event.target.value;
       this.setState({modifiableNews});
     }
     linkChanged=(event,link)=>{
-      console.log(link);
       link[event.target.name]=event.target.value;
       this.setState({});
     }
@@ -228,10 +166,10 @@ class UpdateNotification extends React.Component {
                 <button
                   className="category"
                   key={category.id}
-                  onClick={(e)=>this.fetchNotices(category.id)}
+                  onClick={(e)=>this.fetchNotices(category.category)}
                   style={category.id===this.state.selectedCategory?{backgroundColor:"lightpink"}:null}
                 >
-                  {category.name}
+                  {category.category}
                 </button>
                 <button
                     className="delete-category"
@@ -250,6 +188,13 @@ class UpdateNotification extends React.Component {
           </ul>
         </div>
         <div className="news">
+          <div className="editor-news-item">
+            <div className="news-detail"><label>Detail</label></div>
+            <div className="news-links"><label>Links</label></div>
+            <div className="news-dates"><label>New Date</label></div>
+            <div className="news-dates"><label>Expiry Date</label></div>
+            <div></div>
+          </div>
           {this.state.notices.map((item, index) => {
             return (
               <div className="news-item editor-news-item" onClick={(e)=>this.selectNews(e,item)}>
@@ -265,7 +210,7 @@ class UpdateNotification extends React.Component {
                   ))}</ul>
                 </div>
                 <div className="news-dates">{item.newDate}</div>
-                <div className="news-dates">{item.ExpiryDate}</div>
+                <div className="news-dates">{item.expiryDate}</div>
                 <div className="news-delete">
                   <button
                     className="delete-news"
@@ -289,7 +234,7 @@ class UpdateNotification extends React.Component {
             </label>
             
             <label>Expiry Date
-            <input type="date" name="ExpiryDate" value={this.state.modifiableNews.ExpiryDate} onChange={(e)=>this.valueChanged(e)}/>
+            <input type="date" name="expiryDate" value={this.state.modifiableNews.expiryDate} onChange={(e)=>this.valueChanged(e)}/>
             </label>
             
             <label>New Date
