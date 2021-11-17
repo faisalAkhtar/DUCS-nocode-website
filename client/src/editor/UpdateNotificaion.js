@@ -22,6 +22,7 @@ class UpdateNotification extends React.Component {
     };
   }
   fetchNotices = (category) => {
+    if(!category || category==="") return;
     axios
       .get(baseurl + "api/notifications/"+category)
       .then((res) => {
@@ -52,9 +53,11 @@ class UpdateNotification extends React.Component {
       { headers: { authorization: "Bearer " + this.props.authToken } }).then(
         (res)=>{
           var categories=this.state.categories;
-          categories.push(res.data);
-          this.setState(categories);
+          console.log(res.data)
+          // categories.push(res.data);
+          // this.setState(categories);
           alert("Category added successfully")
+          this.componentDidMount();
         }
       ).catch((err)=>{
         alert("Can't save");
@@ -65,7 +68,11 @@ class UpdateNotification extends React.Component {
       (res)=>{
         var categories=this.state.categories;
         categories=categories.filter((cat)=>cat.id!==id);
-        this.setState({categories},()=>{console.log(this.state.categories);this.render();});
+        var selectedCategory="";
+        if(categories.length>0)
+        selectedCategory=categories[0].category;
+        this.fetchNotices(selectedCategory);
+        this.setState({categories,selectedCategory},()=>{console.log(this.state.categories);this.render();});
         this.reset();
         alert("Delete Success");
       }
@@ -187,6 +194,8 @@ class UpdateNotification extends React.Component {
             </li>
           </ul>
         </div>
+        {
+          this.state.notices? 
         <div className="news">
           <div className="editor-news-item">
             <div className="news-detail"><label>Detail</label></div>
@@ -226,6 +235,7 @@ class UpdateNotification extends React.Component {
             );
           })}
         </div>
+        :null}
         <div className="modifiable-news">
           <h2>Add or edit news</h2>
           <div>
