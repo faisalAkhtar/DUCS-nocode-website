@@ -185,6 +185,11 @@ class UpdateMenu extends React.Component {
         alert("cant update");
       });
   };
+  openInEditor=(filename)=>{
+    // window.location.href
+    console.log(filename)
+    this.props.history.push("/awesomeeditor/editfile/" +filename.join("/"));
+  }
   createMenu = (Menu, parent, level) => {
     if (!Array.isArray(Menu)) return null;
     Menu.sort((a, b) => (a.order > b.order ? 1 : -1));
@@ -196,6 +201,9 @@ class UpdateMenu extends React.Component {
               <li key={menuitem.link}>
                 {" "}
                 <> {menuitem.name} </>
+                <div className="editbuttons">
+                <button className="editbuttonsdropdown">&#10247;</button>
+                <div className="editoptions">
                 <DeleteButton
                   address={parent.concat(menuitem.link)}
                   delete={this.delete}
@@ -214,7 +222,7 @@ class UpdateMenu extends React.Component {
                   parent={parent.concat(menuitem.link)}
                   toggle={this.toggleAddPopup}
                   lastclicked={this.changeLastClick}
-                />
+                /></div></div>
                 {this.createMenu(
                   menuitem.items,
                   parent.concat(menuitem.link),
@@ -226,7 +234,10 @@ class UpdateMenu extends React.Component {
             return (
               <li key={menuitem.link}>
                 {" "}
-                <>{menuitem.name}</>
+                <p onDoubleClick={(e)=>this.openInEditor(parent.concat(menuitem.link))} style={{display:"inline"}}>{menuitem.name}</p>
+                <div className="editbuttons">
+                <button className="editbuttonsdropdown">&#10247;</button>
+                <div className="editoptions">
                 <DeleteButton
                   address={parent.concat(menuitem.link)}
                   delete={this.delete}
@@ -240,7 +251,7 @@ class UpdateMenu extends React.Component {
                   draft={menuitem.draft}
                   name={menuitem.name}
                   type="page"
-                />
+                /></div></div>
               </li>
             );
           }
@@ -261,7 +272,7 @@ class UpdateMenu extends React.Component {
         <Route>
           <div className="menucreator">
             <div className="heading">
-              <h1>FileSystem</h1>
+              <h1 className="head">FileSystem</h1>
               <div className="addbutton">
                 <button className="move" onClick={(e) => this.toggleMove()}>
                   Move

@@ -1,0 +1,154 @@
+.editorcontainer {
+  width: 100%;
+  height: 100%;
+}
+.editorHeader {
+  display: block;
+  width: 100%;
+  height: 55px;
+  /* padding-top: 1%; */
+  background-color: #888;
+  font-size: large;
+
+}
+.editor {
+  display: inline-block;
+  width: 100%;
+  position: absolute;
+  bottom:0;
+  top:55px;
+}
+.fileNameText {
+  display: inline-block;
+  margin-left: 5%;
+}
+.previewButton {
+  width: fit-content;
+  height: fit-content;
+  background-color: #0af;
+  border-radius: 5%;
+  float: right;
+  padding-top: 0%;
+  margin-top: 1%;
+  margin-right: 2%;
+}
+.saveFileButton {
+  width: fit-content;
+  height: fit-content;
+  background-color: #0af;
+  border-radius: 5%;
+  float: right;
+  padding-top: 0%;
+  margin-top: 1%;
+  margin-right: 2%;
+}
+
+.editorLeft{
+  display: inline-block;
+  background-color: #fff;
+  width: 25%;
+  height: 100%;
+  align-items: center;
+  overflow-y: scroll;
+}
+.iconsContainer{
+  width:100%;
+  height:100%;
+}
+.display {
+  display: inline-block;
+  background-color: white;
+  width: 75%;
+  height: 100%;
+  float:right;
+  overflow-y: scroll;
+}
+img {
+  float: left;
+  width: 100%;
+  max-height: 85%;
+  /* border: 1px gray solid; */
+}
+.icon {
+  width: 30%;
+  background-color: white;
+  height: 100px;
+  margin: 5px;
+  font-size: medium;
+  border-radius: 10%;
+}
+.icon:hover {
+  /* border-color: blue; */
+  box-shadow: 3px 3px #888;
+}
+.icon:active {
+  background-color: #eee;
+}
+.addComponentContainer {
+  display: inline-block;
+  width: 100%;
+  float: left;
+}
+.addComponent {
+  display: inline-block;
+  width: 100%;
+  visibility: hidden;
+  margin: 0;
+}
+.addComponentContainer:hover .addComponent {
+  display: inline-block;
+  /* padding-right: 2%; */
+  visibility: visible;
+  width: 100%;
+  margin: 0;
+  /* padding-left: 2%; */
+}
+.addComponentLine {
+  width: 100%;
+  margin: 0;
+  color: darkgray;
+}
+.addcellbutton {
+  display: inline;
+  z-index: 50;
+  position: relative;
+  left: 45%;
+  top: 10px;
+}
+.addComponentButton {
+  z-index: 50;
+  opacity: 1;
+  width: fit-content;
+  font-size: small;
+  background-color: white;
+  color: grey;
+  border-color: grey;
+}
+.addComponentButton:active {
+  background-color: #eee;
+}
+div[class^='item']{
+  display: inline-block;
+  width: 100%;
+  float: left;
+}
+.item {
+  display: inline-block;
+  width: 100%;
+  float: left;
+}
+.item-container {
+  display: inline-block;
+  float: left;
+  width: 100%;
+}
+.selectItem:hover{
+  width: 100%;
+  border-radius: 10px;
+  border: 2px #0af solid;
+}
+.selectedItem{
+  border-radius: 10px;
+  border: 4px #5ae solid;
+}
+/* border: 4px #5ae solid; */

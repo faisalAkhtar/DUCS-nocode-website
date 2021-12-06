@@ -1,0 +1,49 @@
+.title{
+    float: left;
+    text-align: center;
+    font-size: large;
+    color: rgb(161, 161, 161);
+    display: block;
+    border-bottom: 2px black solid;
+    width: 100%;
+}
+.table{
+    display: grid;
+    gap: 10px;
+}
+.Div{
+    display:inline;
+    float: left;
+    margin: 5px;
+}
+.imageGallery{
+    width:100%;
+    padding:2%;
+}
+.imageGallery ul{
+    margin:0px;
+    padding:0px;
+    text-align: center;
+}
+.imageGallery button{
+    display: inline;
+    width: fit-content;
+    border: none;
+    background-color: white;
+    color:gray;
+    cursor: pointer;
+    margin:0px;
+    font-size: larger;
+}
+.imageGallery .selectedImage{
+    color:black;
+}
+.imageGallery li{
+    list-style: none;
+    display: inline;
+    margin: 0px;
+    padding: 0%;
+}
+.imageGallery .image{
+    display:none;
+}

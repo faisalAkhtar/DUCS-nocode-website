@@ -80,13 +80,13 @@ class UpdatePop extends React.Component{
         e.preventDefault(); //to stop default action of form so that we can do desired 
         console.log("from popup submit");
         var changes={};
-        if(this.state.name!==this.props.parent.name)
+        //if(this.state.name!==this.props.parent.name)
             changes.name=this.state.name;
-        if(this.state.filename!==this.props.parent.address[this.props.parent.address.length-1])
+        //if(this.state.filename!==this.props.parent.address[this.props.parent.address.length-1])
             changes.link=this.state.filename;
-        if(this.state.order!==this.props.parent.order)
-            changes.order=this.state.order;
-        if(this.state.draft!==this.props.parent.draft)
+        // if(this.state.order!==this.props.parent.order)
+        //     changes.order=this.state.order;
+        //if(this.state.draft!==this.props.parent.draft)
             changes.draft=this.state.draft;
         if(Object.keys(changes).length === 0 && changes.constructor === Object){
             alert("You haven't made any changes");
@@ -108,9 +108,9 @@ class UpdatePop extends React.Component{
                     <label>fileName
                         <input type="text" id="filename" value={this.state.filename} onChange={event=>this.onChange(event)}/>
                     </label>
-                    <label>order
+                    {/* <label>order
                         <input type="number" value={this.state.order} onChange={e=>this.onChange(e)}/>
-                    </label>
+                    </label> */}
                     <label>Draft
                         <input type="radio" id="draft" value="true" onChange={e=>this.onDraftChange(e)} checked={this.state.draft===true} />Yes
                         <input type="radio" id="draft" value="false" onChange={e=>this.onDraftChange(e)} checked={this.state.draft===false}/>No

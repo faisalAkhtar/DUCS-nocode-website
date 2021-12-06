@@ -1,0 +1,26 @@
+textarea{
+    min-width:98%;
+    max-width: 98%;
+    height:100px;
+    font-size: large;
+}
+.image-link{
+    padding:5px;
+    margin-bottom: 10px;
+}
+.image-link:hover{
+    background-color: #afafaf;
+    border-radius:5px ;
+}
+.image-link:hover .delete-image-link{
+    display:flex;
+}
+.delete-image-link{
+    display: none;
+    background-color: inherit;
+    border: none;
+    position: relative;
+    float:right;
+    z-index: 10;
+    width: 30px;
+}
