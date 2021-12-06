@@ -1,13 +1,15 @@
-var express = require('express')
-var cookieParser = require('cookie-parser')
-var logger = require('morgan')
-var createError = require('http-errors')
-var path = require('path')
+const express = require('express')
+const cookieParser = require('cookie-parser')
+const logger = require('morgan')
+const createError = require('http-errors')
+const path = require('path')
 
-var WebsiteRouter = require('./routes/website-route.config')
-var EditorRouter = require('./routes/editor-route.config')
+const AuthRouter = require('./routes/auth-route.config')
+const WebsiteRouter = require('./routes/website-route.config')
+const FilesystemRouter = require('./routes/filesystem-route.config')
+const PageEditorRouter = require('./routes/page-editor-route.config')
 
-var app = express()
+const app = express()
 app.use(function (req, res, next) {
 	res.header('Access-Control-Allow-Origin', '*')
 	res.header('Access-Control-Allow-Credentials', 'true')
@@ -27,8 +29,10 @@ app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
+AuthRouter.routeConfig(app)
 WebsiteRouter.routeConfig(app)
-EditorRouter.routeConfig(app)
+FilesystemRouter.routeConfig(app)
+PageEditorRouter.routeConfig(app)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
