@@ -6,6 +6,7 @@
         "category": "student",
         "notifications": [
             {
+                "id": "91415059bc805915e43e40d3",
                 "details": "Interview for Appointment of Assistant Professor on Guest basis in the Department of Computer Science, University of Delhi, Delhi (Dated: August 31,2021)",
                 "uploadDate": "2021-09-20",
                 "newDate": "2021-09-25",
@@ -22,6 +23,7 @@
                 ]
             },
             {
+                "id": "3e40d39141805915e45059bc",
                 "details": "Extension of last date of the filling the form for Pre-admission preparation classes for candidates, from lesser privileged sections of the society, applying for Ph.D. (Computer Science) program for the academic year 2021-22 in the Department of Computer Science (Dated: August 24, 2021): ",
                 "uploadDate": "2021-09-15",
                 "newDate": "2021-09-25",
@@ -34,6 +36,7 @@
                 ]
             },
             {
+                "id": "40d3914150805915e459bc3e",
                 "details": "Revised Notice for Appointment of Assistant Professor on Guest basis in the Department of Computer Science, University of Delhi, Delhi (Dated: August 17, 2021)",
                 "uploadDate": "2021-08-30",
                 "newDate": "2021-09-15",
@@ -58,6 +61,7 @@
         "category": "admissions",
         "notifications": [
             {
+                "id": "d391415059805915e4bc3e40",
                 "details": "Appointment of Assistant Professor on Guest basis in the Department of Computer Science, University of Delhi, Delhi (Dated: August 17, 2021)",
                 "uploadDate": "2021-09-20",
                 "newDate": "2021-09-25",
@@ -70,6 +74,7 @@
                 ]
             },
             {
+                "id": "bc3e40d391805915e4415059",
                 "details": "Pre-admission preparation classes for candidates, from lesser privileged sections of the society, applying for Ph.D. (Computer Science) program for the academic year 2021-22 in the Department of Computer Science  ",
                 "uploadDate": "2021-09-15",
                 "newDate": "2021-09-25",
@@ -82,6 +87,7 @@
                 ]
             },
             {
+                "id": "c3e40d3914805915e415059b",
                 "details": "Panel for appointment of Assistant Professors (on Ad-hoc basis) in Computer Science in the constituent colleges of University of Delhi for the academic year 2021-22 ",
                 "uploadDate": "2021-08-30",
                 "newDate": "2021-09-15",

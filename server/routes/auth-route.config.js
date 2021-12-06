@@ -4,7 +4,9 @@ const UserController = require('../controllers/ManageUsers')
 const AuthController = require('../controllers/Authorization')
 
 exports.routeConfig = function (app) {
-    app.post('/awesome-editor/users', UserController.insert)
+    app.post('/awesome-editor/users', [
+        UserController.insert
+    ])
 
     app.post('/awesome-editor/auth', [
         VerifyUserMiddleware.hasValidFields,
