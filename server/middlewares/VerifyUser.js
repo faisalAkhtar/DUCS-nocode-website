@@ -35,6 +35,7 @@ exports.isPasswordUserMatch = function (req, res, next) {
                         email: users[0].email,
                         name: users[0].firstName + ' ' + users[0].lastName,
                         permissionLevel: users[0].permissionLevel,
+                        isAdmin: users[0].isAdmin,
                         provider: 'email',
                     }
                     return next()

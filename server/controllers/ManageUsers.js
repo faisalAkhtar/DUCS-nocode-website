@@ -19,3 +19,24 @@ exports.insert = function (req, res, next) {
         }
     )
 }
+
+exports.fetchSelf = function (req, res, next) {
+    UserModel.getCurrentUser(req.jwt.userId,
+        (err, response) => {
+            if (err)
+                return res.status(500).json({ msg: err })
+            return res.status(200).send(response)
+        }
+    )
+}
+
+exports.fetchAll = function (req, res, next) {
+    UserModel.getAllUsers(
+        (err, response) => {
+            if (err)
+                return res.status(500).json({ msg: err })
+
+            return res.status(200).send(response)
+        }
+    )
+}
