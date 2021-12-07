@@ -8,35 +8,57 @@ exports.insert = function (req, res, next) {
     req.body.permissionLevel = 1
 
     UserModel.createUser(req.body,
-        (err, response) => {
+        (err, result) => {
             if (err)
                 return res.status(500).json({ "msg": err })
 
-            if (!response.acknowledged)
+            if (!result.acknowledged)
                 return res.status(500).json({ "msg": "Couldn't create new user, pta ni qq 🤷‍♂" })
 
-            return res.status(201).send({ id: response.insertedId })
+            return res.status(201).send({ id: result.insertedId })
         }
     )
 }
 
 exports.fetchSelf = function (req, res, next) {
     UserModel.getCurrentUser(req.jwt.userId,
-        (err, response) => {
+        (err, result) => {
             if (err)
                 return res.status(500).json({ msg: err })
-            return res.status(200).send(response)
+            return res.status(200).send(result)
         }
     )
 }
 
 exports.fetchAll = function (req, res, next) {
     UserModel.getAllUsers(
-        (err, response) => {
+        (err, result) => {
             if (err)
                 return res.status(500).json({ msg: err })
 
-            return res.status(200).send(response)
+            return res.status(200).send(result)
+        }
+    )
+}
+
+exports.deleteOne = function (req, res, next) {
+    let uid = req.params.uid
+
+    if (uid.trim() === "")
+        return res.status(400).json({ msg: "Provide a valid ID" })
+    if (uid === req.jwt.userId)
+        return res.status(400).json({ msg: "Cannot delete self" })
+
+    UserModel.deleteUser(
+        uid,
+        (err, result) => {
+            if (err)
+                return res.status(500).json({ msg: err })
+
+            if (result.deletedCount === 0)
+                return res.status(404).json({ "msg": "User doesn't exist" })
+
+            return res.status(200).send(result)
         }
     )
 }

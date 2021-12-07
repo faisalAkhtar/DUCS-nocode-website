@@ -26,10 +26,10 @@ exports.findUserByEmail = function (email, callbackFunc) {
 
 exports.getCurrentUser = function (uid, callbackFunc) {
     var userCollection = db.get().collection('users')
-    var id = new mongo.ObjectId(uid)
 
     userCollection
-        .findOne({ '_id': id },
+        .findOne(
+            { _id: new mongo.ObjectId(uid) },
             (err, doc) => {
                 if (err)
                     return callbackFunc(err, null)
@@ -65,4 +65,18 @@ exports.getAllUsers = function (callbackFunc) {
             })
             return callbackFunc(err, docs)
         })
+}
+
+exports.deleteUser = function (uid, callbackFunc) {
+    var userCollection = db.get().collection('users')
+
+    userCollection
+        .deleteOne(
+            { _id: new mongo.ObjectId(uid) },
+            (err, result) => {
+                if (err)
+                    return callbackFunc(err, null)
+                callbackFunc(err, result)
+            }
+        )
 }

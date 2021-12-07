@@ -18,4 +18,10 @@ exports.routeConfig = function (app) {
         ValidationMiddleware.adminOnly,
         UserController.insert
     ])
+
+    app.delete('/users/:uid', [
+        ValidationMiddleware.validateJWT,
+        ValidationMiddleware.adminOnly,
+        UserController.deleteOne
+    ])
 }
