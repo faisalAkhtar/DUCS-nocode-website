@@ -24,4 +24,10 @@ exports.routeConfig = function (app) {
         ValidationMiddleware.adminOnly,
         UserController.deleteOne
     ])
+
+    app.put('/users', [
+        ValidationMiddleware.validateJWT,
+        ValidationMiddleware.adminOnly,
+        UserController.updateOne
+    ])
 }

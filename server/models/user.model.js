@@ -36,9 +36,9 @@ exports.getCurrentUser = function (uid, callbackFunc) {
                 if (!doc)
                     return callbackFunc('Category doesn\'t exist', null)
                 doc['uid'] = doc._id
-                if (user.isAdmin)
-                    user['role'] = 'admin'
-                else user['role'] = 'editor'
+                if (doc.isAdmin)
+                    doc['role'] = 'admin'
+                else doc['role'] = 'editor'
                 delete doc._id
                 delete doc.isAdmin
                 delete doc.password
@@ -73,10 +73,17 @@ exports.deleteUser = function (uid, callbackFunc) {
     userCollection
         .deleteOne(
             { _id: new mongo.ObjectId(uid) },
-            (err, result) => {
-                if (err)
-                    return callbackFunc(err, null)
-                callbackFunc(err, result)
-            }
+            (err, result) => callbackFunc(err, result)
+        )
+}
+
+exports.updateUser = function (uid, { firstName, lastName, email, password, permissionLevel }, callbackFunc) {
+    var userCollection = db.get().collection('users')
+
+    userCollection
+        .updateOne(
+            { _id: new mongo.ObjectId(uid) },
+            { $set: { firstName, lastName, email, password, permissionLevel } },
+            (err, result) => callbackFunc(err, result)
         )
 }
