@@ -7,6 +7,11 @@ exports.routeConfig = function (app) {
         UserController.fetchSelf
     ])
 
+    app.put('/user', [
+        ValidationMiddleware.validateJWT,
+        UserController.updateSelf
+    ])
+
     app.get('/users', [
         ValidationMiddleware.validateJWT,
         ValidationMiddleware.adminOnly,
