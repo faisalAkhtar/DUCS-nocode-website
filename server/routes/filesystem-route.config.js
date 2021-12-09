@@ -44,4 +44,10 @@ exports.routeConfig = function (app) {
         ValidationMiddleware.adminOnly,
         FilesystemController.GetUsersPermissions
     ])
+
+    app.post('/awesome-editor/filesystem/permissions/:uid', [
+        ValidationMiddleware.validateJWT,
+        ValidationMiddleware.adminOnly,
+        FilesystemController.UpdateUsersPermissions
+    ])
 }

@@ -206,3 +206,23 @@ exports.GetUsersPermissions = function (req, res, next) {
         }
     )
 }
+
+exports.UpdateUsersPermissions = function (req, res, next) {
+    let id = req.params.uid
+
+    if (!/[0-9A-Fa-f]{24}/g.test(id))
+        return res.status(400).json({ msg: "Provide a valid ID" })
+
+    let newPermissions = req.body
+
+    if (!newPermissions || typeof (newPermissions) !== 'object')
+        return res.status(400).json({ "msg": "Invalid body sent" })
+
+    FilesystemModal.updatePermissions(id, newPermissions,
+        (err, result) => {
+            if (err)
+                return res.status(400).json({ "msg": err })
+            return res.status(200).json(result)
+        }
+    )
+}

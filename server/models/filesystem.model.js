@@ -367,3 +367,99 @@ exports.getPermissions = function (uid, callbackFunc) {
         }
     )
 }
+
+exports.updatePermissions = function (uid, newPermissions, callbackFunc) {
+    let sorterFunc = function (a, b) {
+        let la = a.link.toLowerCase(),
+            lb = b.link.toLowerCase()
+        if (la < lb) return -1
+        if (la > lb) return 1
+        return 0
+    }
+
+    newPermissions.sort(sorterFunc)
+
+    var filesystemCollection = db.get().collection('filesystem')
+    filesystemCollection.find().toArray(
+        (err, docs) => {
+            if (err) return callbackFunc(err)
+
+            if (docs.length !== newPermissions.length)
+                return callbackFunc('Invalid structure provided')
+
+            docs.sort(sorterFunc)
+            for (let it = 0; it < docs.length; it++) {
+                if (docs[it].link !== newPermissions[it].link) {
+                    return callbackFunc('Invalid structure provided')
+                }
+                if (newPermissions[it].permitted) {
+                    if (docs[it].permission)
+                        docs[it].permission.push(uid)
+                    else docs[it]['permission'] = [uid]
+                } else if (docs[it].permission) {
+                    let ind = docs[it].permission.indexOf(uid)
+                    if (ind > -1)
+                        docs[it].permission.splice(ind, 1)
+                }
+
+                if (docs[it].type === 'menu' && docs[it].items) {
+                    docs[it].items.sort(sorterFunc)
+                    newPermissions[it].items.sort(sorterFunc)
+                    for (let jt = 0; jt < docs[it].items.length; jt++) {
+                        if (docs[it].items[jt].link !== newPermissions[it].items[jt].link) {
+                            return callbackFunc('Invalid structure provided')
+                        }
+                        if (newPermissions[it].items[jt].permitted) {
+                            if (docs[it].items[jt].permission)
+                                docs[it].items[jt].permission.push(uid)
+                            else docs[it].items[jt]['permission'] = [uid]
+                        } else if (docs[it].items[jt].permission) {
+                            let ind = docs[it].items[jt].permission.indexOf(uid)
+                            if (ind > -1)
+                                docs[it].items[jt].permission.splice(ind, 1)
+                        }
+
+                        if (docs[it].items[jt].type === 'menu' && docs[it].items[jt].items) {
+                            docs[it].items[jt].items.sort(sorterFunc)
+                            newPermissions[it].items[jt].items.sort(sorterFunc)
+                            for (let kt = 0; kt < docs[it].items[jt].items.length; kt++) {
+                                if (docs[it].items[jt].items[kt].link !== newPermissions[it].items[jt].items[kt].link) {
+                                    return callbackFunc('Invalid structure provided')
+                                }
+                                if (newPermissions[it].items[jt].items[kt].permitted) {
+                                    if (docs[it].items[jt].items[kt].permission)
+                                        docs[it].items[jt].items[kt].permission.push(uid)
+                                    else docs[it].items[jt].items[kt]['permission'] = [uid]
+                                } else if (docs[it].items[jt].items[kt].permission) {
+                                    let ind = docs[it].items[jt].items[kt].permission.indexOf(uid)
+                                    if (ind > 1)
+                                        docs[it].items[jt].items[kt].permission.splice(ind, 1)
+                                }
+                            }
+                        }
+
+                    }
+
+                    filesystemCollection.updateOne(
+                        { link: docs[it].link },
+                        { $set: { permission: docs[it].permission, items: docs[it].items } },
+                        (err, res) => {
+                            if (err) return callbackFunc(err)
+                        }
+                    )
+                } else {
+                    filesystemCollection.updateOne(
+                        { link: docs[it].link },
+                        { $set: { permission: docs[it].permission } },
+                        (err, res) => {
+                            if (err) return callbackFunc(err)
+                        }
+                    )
+                }
+
+            }
+
+            return callbackFunc(null, docs)
+        }
+    )
+}
