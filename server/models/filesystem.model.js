@@ -5,7 +5,23 @@ exports.list = function (callbackFunc) {
     filesystemCollection
         .find()
         .sort({ order: 1 })
-        .toArray((err, docs) => callbackFunc(err, docs))
+        .toArray((err, docs) => {
+            if (err)
+                return callbackFunc(err, null)
+
+            docs.map(menu => {
+                menu['id'] = menu._id
+                delete menu._id
+                delete menu.permission
+                menu.items && menu.items.map(sub => {
+                    if (sub.type == "menu") {
+                        delete sub.permission
+                    }
+                })
+            })
+
+            return callbackFunc(err, docs)
+        })
 }
 
 exports.fileExists = function (address, type, callbackFunc) {
@@ -321,6 +337,33 @@ exports.changeOrder = function (newOrder, callbackFunc) {
             }
 
             return callbackFunc(null, docs)
+        }
+    )
+}
+
+exports.getPermissions = function (uid, callbackFunc) {
+    var filesystemCollection = db.get().collection('filesystem')
+    filesystemCollection.find().toArray(
+        (err, docs) => {
+            if (err) return callbackFunc(err)
+
+            docs.forEach(menu => {
+                menu['id'] = menu._id
+                menu['permitted'] = menu.permission.indexOf(uid) > -1
+                delete menu._id
+                delete menu.permission
+                delete menu.name
+                menu.items ? (
+                    menu.items.map(sub => {
+                        delete sub.name
+                        delete sub.draft
+                    })
+                ) : (
+                    delete menu.draft
+                )
+            })
+
+            return callbackFunc(err, docs)
         }
     )
 }

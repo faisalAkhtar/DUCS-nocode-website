@@ -33,4 +33,15 @@ exports.routeConfig = function (app) {
         ValidationMiddleware.validateJWT,
         FilesystemController.ChangeItemOrder
     ])
+
+    app.get('/awesome-editor/filesystem/permissions', [
+        ValidationMiddleware.validateJWT,
+        FilesystemController.GetCurrentUsersPermissions
+    ])
+
+    app.get('/awesome-editor/filesystem/permissions/:uid', [
+        ValidationMiddleware.validateJWT,
+        ValidationMiddleware.adminOnly,
+        FilesystemController.GetUsersPermissions
+    ])
 }

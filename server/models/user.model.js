@@ -1,7 +1,7 @@
 var db = require('../utils/db')
 var mongo = require('mongodb')
 
-exports.createUser = function ({ firstName, lastName, email, password, permissionLevel }, callbackFunc) {
+exports.createUser = function ({ firstName, lastName, email, password }, callbackFunc) {
     var userCollection = db.get().collection('users')
 
     var user = {
@@ -9,7 +9,6 @@ exports.createUser = function ({ firstName, lastName, email, password, permissio
         lastName,
         email,
         password,
-        permissionLevel,
         isAdmin: false
     }
 
@@ -77,13 +76,13 @@ exports.deleteUser = function (uid, callbackFunc) {
         )
 }
 
-exports.updateUser = function (uid, { firstName, lastName, email, password, permissionLevel }, callbackFunc) {
+exports.updateUser = function (uid, { firstName, lastName, email, password }, callbackFunc) {
     var userCollection = db.get().collection('users')
 
     userCollection
         .updateOne(
             { _id: new mongo.ObjectId(uid) },
-            { $set: { firstName, lastName, email, password, permissionLevel } },
+            { $set: { firstName, lastName, email, password } },
             (err, result) => callbackFunc(err, result)
         )
 }
