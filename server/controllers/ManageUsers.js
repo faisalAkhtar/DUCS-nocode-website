@@ -68,8 +68,6 @@ exports.fetchAll = function (req, res, next) {
 exports.deleteOne = function (req, res, next) {
     let uid = req.params.uid
 
-    if (uid.trim() === "")
-        return res.status(400).json({ msg: "Provide a valid ID" })
     if (uid === req.jwt.userId)
         return res.status(400).json({ msg: "Cannot delete self" })
 
@@ -82,7 +80,7 @@ exports.deleteOne = function (req, res, next) {
             if (result.deletedCount === 0)
                 return res.status(404).json({ "msg": "User doesn't exist" })
 
-            return res.status(200).send(result)
+            return res.status(200).json({ "msg": "User deleted" })
         }
     )
 }

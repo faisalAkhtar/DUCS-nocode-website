@@ -1,4 +1,5 @@
 var db = require('../utils/db')
+var mongo = require('mongodb')
 
 exports.list = function (callbackFunc) {
     var filesystemCollection = db.get().collection('filesystem')
@@ -354,9 +355,18 @@ exports.getPermissions = function (uid, callbackFunc) {
                 delete menu.permission
                 delete menu.name
                 menu.items ? (
-                    menu.items.map(sub => {
+                    menu.items.forEach(sub => {
+                        delete sub.permission
                         delete sub.name
-                        delete sub.draft
+                        sub.items ? (
+                            sub.items.forEach(tri => {
+                                delete tri.permission
+                                delete tri.name
+                                delete tri.draft
+                            })
+                        ) : (
+                            delete sub.draft
+                        )
                     })
                 ) : (
                     delete menu.draft
@@ -460,6 +470,59 @@ exports.updatePermissions = function (uid, newPermissions, callbackFunc) {
             }
 
             return callbackFunc(null, docs)
+        }
+    )
+}
+
+
+exports.deletePermissions = function (uid, callbackFunc) {
+    var filesystemCollection = db.get().collection('filesystem')
+    filesystemCollection.find().toArray(
+        (err, docs) => {
+            if (err) return callbackFunc(err)
+
+            docs.forEach(menu => {
+                if (menu.permission) {
+                    let ind = menu.permission.indexOf(uid)
+                    if (ind > -1) menu.permission.splice(ind, 1)
+                }
+
+                if (menu.items) {
+                    menu.items.forEach(sub => {
+                        if (sub.permission) {
+                            let ind = sub.permission.indexOf(uid)
+                            if (ind > -1) sub.permission.splice(ind, 1)
+                        }
+
+                        if (sub.items) {
+                            sub.items.forEach(tri => {
+                                if (tri.permission) {
+                                    let ind = tri.permission.indexOf(uid)
+                                    if (ind > -1) tri.permission.splice(ind, 1)
+                                }
+                            })
+                        }
+                    })
+
+                    filesystemCollection.updateOne(
+                        { _id: new mongo.ObjectId(menu._id) },
+                        { $set: { permission: menu.permission, items: menu.items } },
+                        (err, res) => {
+                            if (err) return callbackFunc(err)
+                        }
+                    )
+                } else {
+                    filesystemCollection.updateOne(
+                        { _id: new mongo.ObjectId(menu._id) },
+                        { $set: { permission: menu.permission } },
+                        (err, res) => {
+                            if (err) return callbackFunc(err)
+                        }
+                    )
+                }
+            })
+
+            return callbackFunc(null, null)
         }
     )
 }

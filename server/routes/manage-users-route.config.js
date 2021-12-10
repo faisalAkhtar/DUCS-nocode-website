@@ -1,4 +1,5 @@
 const ValidationMiddleware = require('../middlewares/Validation')
+const FilesystemMiddleware = require('../middlewares/FileSystem')
 const UserController = require('../controllers/ManageUsers')
 
 exports.routeConfig = function (app) {
@@ -27,6 +28,7 @@ exports.routeConfig = function (app) {
     app.delete('/users/:uid', [
         ValidationMiddleware.validateJWT,
         ValidationMiddleware.adminOnly,
+        FilesystemMiddleware.DeleteUsersPermissions,
         UserController.deleteOne
     ])
 

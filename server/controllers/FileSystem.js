@@ -222,7 +222,7 @@ exports.UpdateUsersPermissions = function (req, res, next) {
         (err, result) => {
             if (err)
                 return res.status(400).json({ "msg": err })
-            return res.status(200).json(result)
+            return res.status(200).send()
         }
     )
 }

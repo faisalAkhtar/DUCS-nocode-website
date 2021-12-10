@@ -18,13 +18,29 @@ exports.CheckIfItemExists = function (req, res, next) {
     FilesystemModal.fileExists(address, type,
         (sign) => {
             if (sign === -2)
-                return res.status(500).json({ msg: "Unknown error with database" })
+                return res.status(500).json({ msg: "An error occurred" })
             else if (sign === -1)
                 return res.status(400).json({ msg: "Invalid parent in the address" })
             else if (sign === 1 || sign === 0) {
                 res.locals.itemFound = sign === 1
                 return next()
             }
+        }
+    )
+}
+
+exports.DeleteUsersPermissions = function (req, res, next) {
+    let uid = req.params.uid
+
+    if (!/[0-9A-Fa-f]{24}/g.test(uid))
+        return res.status(400).json({ msg: "Provide a valid ID" })
+
+    FilesystemModal.deletePermissions(uid,
+        (err, res) => {
+            if (err)
+                return res.status(500).json({ msg: err })
+
+            return next()
         }
     )
 }
