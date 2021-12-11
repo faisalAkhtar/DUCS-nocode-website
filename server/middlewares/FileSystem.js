@@ -1,8 +1,11 @@
 const FilesystemModal = require('../models/filesystem.model')
 
-exports.CheckIfItemExists = function (req, res, next) {
+exports.ExistsAndPermitted = function (req, res, next) {
     let address = req.body.address,
-        type = req.body.type
+        type = req.body.type,
+        uid = req.jwt.userId,
+        isAdmin = req.jwt.isAdmin
+
     if (!address || address.length === 0 || !type)
         return res.status(400).json({ msg: "Invalid syntax" })
 
@@ -15,9 +18,11 @@ exports.CheckIfItemExists = function (req, res, next) {
     if (type.length === 0 || ["page", "menu"].indexOf(type) === -1)
         return res.status(400).json({ msg: "Invalid syntax" })
 
-    FilesystemModal.fileExists(address, type,
+    FilesystemModal.existsAndPermitted(address, type, uid, isAdmin,
         (sign) => {
-            if (sign === -2)
+            if (sign === -3)
+                return res.status(403).json({ msg: "Editing privileges required" })
+            else if (sign === -2)
                 return res.status(500).json({ msg: "An error occurred" })
             else if (sign === -1)
                 return res.status(400).json({ msg: "Invalid parent in the address" })

@@ -25,7 +25,7 @@ exports.list = function (callbackFunc) {
         })
 }
 
-exports.fileExists = function (address, type, callbackFunc) {
+exports.existsAndPermitted = function (address, type, uid, isAdmin, callbackFunc) {
     var filesystemCollection = db.get().collection('filesystem')
     // finding document in address[0]
     filesystemCollection
@@ -37,18 +37,27 @@ exports.fileExists = function (address, type, callbackFunc) {
                     return callbackFunc(-2)
                 }
 
+                // get permissions
+                let permitted = false || isAdmin
+
                 // document NOT found from address[0]
                 if (!doc) {
-                    if (address.length === 1)
+                    if (address.length === 1) {
+                        if (!permitted)
+                            return callbackFunc(-3)
                         return callbackFunc(0)
-                    else return callbackFunc(-1)
+                    }
+                    return callbackFunc(-1)
                 }
+                permitted = doc.permission ? doc.permission.indexOf(uid) > -1 : false || isAdmin
 
                 // document found from address[0]
                 // address.length === 1 means our search is over
-                if (address.length === 1 && type === doc.type)
+                if (address.length === 1 && type === doc.type) {
+                    if (!permitted)
+                        return callbackFunc(-3)
                     return callbackFunc(1)
-                else if (doc.type !== "menu")
+                } else if (doc.type !== "menu")
                     return callbackFunc(-1)
 
                 // finding document from address[1]
@@ -63,18 +72,26 @@ exports.fileExists = function (address, type, callbackFunc) {
                     }
                 }
 
+                // update permissions
+                if (!permitted) permitted = doc.permission ? doc.permission.indexOf(uid) > -1 : false
+
                 // document NOT found from address[1]
                 if (!found) {
-                    if (address.length === 2)
+                    if (address.length === 2) {
+                        if (!permitted)
+                            return callbackFunc(-3)
                         return callbackFunc(0)
-                    else return callbackFunc(-1)
+                    }
+                    return callbackFunc(-1)
                 }
 
                 // document found from address[1]
                 // address.length === 2 means our search is over
-                if (address.length === 2 && type === doc.type)
+                if (address.length === 2 && type === doc.type) {
+                    if (!permitted)
+                        return callbackFunc(-3)
                     return callbackFunc(1)
-                else if (doc.type !== "menu")
+                } else if (doc.type !== "menu")
                     return callbackFunc(-1)
 
                 // finding document from address[2]
@@ -83,17 +100,26 @@ exports.fileExists = function (address, type, callbackFunc) {
                     for (const it of doc.items) {
                         if (it.link === address[2]) {
                             found = true
+                            doc = it
                             break
                         }
                     }
                 }
 
+                // update permissions
+                if (!permitted) permitted = doc.permission ? doc.permission.indexOf(uid) > -1 : false
+
                 // document NOT found from address[2]
-                if (!found && type === 'page')
+                if (!found && type === 'page') {
+                    if (!permitted)
+                        return callbackFunc(-3)
                     return callbackFunc(0)
+                }
 
                 // document found from address[2]
                 // address.length === 3 means our search is over
+                if (!permitted)
+                    return callbackFunc(-3)
                 return callbackFunc(1)
             }
         )
@@ -350,16 +376,18 @@ exports.getPermissions = function (uid, callbackFunc) {
 
             docs.forEach(menu => {
                 menu['id'] = menu._id
-                menu['permitted'] = menu.permission.indexOf(uid) > -1
+                menu['permitted'] = !!menu.permission ? menu.permission.indexOf(uid) > -1 : false
                 delete menu._id
                 delete menu.permission
                 delete menu.name
                 menu.items ? (
                     menu.items.forEach(sub => {
+                        sub['permitted'] = menu.permitted || (!!sub.permission ? sub.permission.indexOf(uid) : false)
                         delete sub.permission
                         delete sub.name
                         sub.items ? (
                             sub.items.forEach(tri => {
+                                tri['permitted'] = menu.permitted || sub.permitted || (!!tri.permission ? tri.permission.indexOf(uid) : false)
                                 delete tri.permission
                                 delete tri.name
                                 delete tri.draft

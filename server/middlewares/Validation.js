@@ -39,5 +39,5 @@ exports.validRefreshNeeded = (req, res, next) => {
 exports.adminOnly = (req, res, next) => {
     if (req.jwt.isAdmin)
         next()
-    else return res.status(403).json({ msg: "You need to be an admin for this request" })
+    else return res.status(403).json({ msg: "Admin privileges required" })
 }
