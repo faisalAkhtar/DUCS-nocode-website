@@ -49,7 +49,7 @@ exports.existsAndPermitted = function (address, type, uid, isAdmin, callbackFunc
                     }
                     return callbackFunc(-1)
                 }
-                permitted = doc.permission ? doc.permission.indexOf(uid) > -1 : false || isAdmin
+                permitted = (doc.permission ? (doc.permission.indexOf(uid) > -1) : false) || isAdmin
 
                 // document found from address[0]
                 // address.length === 1 means our search is over
@@ -73,7 +73,7 @@ exports.existsAndPermitted = function (address, type, uid, isAdmin, callbackFunc
                 }
 
                 // update permissions
-                if (!permitted) permitted = doc.permission ? doc.permission.indexOf(uid) > -1 : false
+                if (!permitted) permitted = doc.permission ? (doc.permission.indexOf(uid) > -1) : false
 
                 // document NOT found from address[1]
                 if (!found) {
@@ -107,7 +107,7 @@ exports.existsAndPermitted = function (address, type, uid, isAdmin, callbackFunc
                 }
 
                 // update permissions
-                if (!permitted) permitted = doc.permission ? doc.permission.indexOf(uid) > -1 : false
+                if (!permitted) permitted = doc.permission ? (doc.permission.indexOf(uid) > -1) : false
 
                 // document NOT found from address[2]
                 if (!found && type === 'page') {
