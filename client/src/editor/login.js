@@ -24,7 +24,7 @@ class Login extends React.Component{
             res=>{
                 console.log(res.data);
                 //set token in editor app's state
-                this.props.onSucc(res.data.accessToken,res.data.refreshToken);
+                this.props.onSucc(res.data.accessToken,res.data.refreshToken,res.data.userObj);
             }
         ).catch(
             err => {alert("invalid email or password")

@@ -37,8 +37,16 @@ class Notification extends React.Component {
       .catch((err) => console.log(err));
   };
   displayNew = () => {
-    return null;
+    return <img style={ {width:"50px",height:"25px",float:"right"}} src="https://www.insarag.org/wp-content/uploads/2016/06/new-gif-image-6.gif" alt="New"/>;
   };
+  getDate=()=>{
+    let today = new Date();
+    let dd = today.getDate();
+    let mm = today.getMonth()+1; 
+    const yyyy = today.getFullYear();
+    today = `${yyyy}-${mm}-${dd}`;
+    return today;
+  }
   render() {
     return (
       <div className="news-container">
@@ -53,7 +61,7 @@ class Notification extends React.Component {
                   className="category"
                   key={category.id}
                   onClick={(e)=>this.fetchNotices(category.category)}
-                  style={category.id===this.state.selectedCategory?{backgroundColor:"lightpink"}:null}
+                  style={category.category===this.state.selectedCategory?{backgroundColor:"#e0bcee"}:null}
                 >
                   {category.category}
                 </button>
@@ -65,13 +73,13 @@ class Notification extends React.Component {
           {this.state.notices.map((item, index) => {
             return (
               <div className="news-item">
-                <p>{item.details}</p>
+                <p style={{display:"inline"}}>{item.details}</p>
                 {item.links.map((link) => (
                   <a target="_blank" href={link.link}>
                     {link.name}
                   </a>
                 ))}
-                {item.isNew ? this.displayNew() : null}
+                {item.newDate>this.getDate() ? this.displayNew() : null}
               </div>
             );
           })}

@@ -21,17 +21,20 @@ class EditorApp extends React.Component {
     );}
   }
   //set current autorization token values on reciept in current state
-  setToken = (auth, refresh) => {
+  setToken = (auth, refresh,userObj) => {
     this.setState({
       authToken: auth,
       refreshToken: refresh,
+      userObj,
     });
     if (auth === "" || refresh === "") {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
+      localStorage.removeItem("userObj");
     } else {
       localStorage.setItem("accessToken", auth);
       localStorage.setItem("refreshToken", refresh);
+      localStorage.setItem("userObj", userObj);
     }
     console.log("tokens set");
     console.log(this.state.authToken);
@@ -55,11 +58,12 @@ class EditorApp extends React.Component {
     //if not then change url here only so not to show wrong thing there
     // if(this.state.authToken!=="")
     //     this.verifyToken();
-    return this.state.authToken === "" ? (
-      <Login onSucc={this.setToken} />
-    ) : (
-      <App logout={this.setToken} authToken={this.state.authToken} />
-    );
+    return <App logout={this.setToken} authToken={this.state.authToken} userObj={this.state.userObj}/>;
+    // return this.state.authToken === "" ? (
+    //   <Login onSucc={this.setToken} />
+    // ) : (
+    //   <App logout={this.setToken} authToken={this.state.authToken} />
+    // );
   }
 }
 
