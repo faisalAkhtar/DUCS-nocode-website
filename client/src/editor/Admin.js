@@ -29,7 +29,7 @@ class App extends React.Component {
             <div className="left">
               <h1>Editor Options</h1>
               <hr />
-              {this.props.userObj.isAdmin ? (
+              {this.props.userObj && this.props.userObj.isAdmin ? (
                 <button
                   name="update-users"
                   onClick={(e) => this.action(e.target.name)}
@@ -70,7 +70,7 @@ class App extends React.Component {
             <div className="right">
               <Switch>
                 <Route path="/awesomeeditor/update-users">
-                  {this.props.userObj.isAdmin ? (
+                  {this.props.userObj && this.props.userObj.isAdmin ? (
                     <UpdateUser
                       authToken={this.props.authToken}
                       logout={this.logout}
