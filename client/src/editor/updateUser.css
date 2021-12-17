@@ -75,19 +75,34 @@
   background-color: white;
   border:none;
   margin:auto;
-
+  float:left;
 }
 .category-list-item:hover .delete-category{
   display: inline;
 }
-.users-table{
+.users{
   display: grid;
   grid-template-columns: repeat(3,1fr);
+  margin: 20px;
+  border-bottom: 0.5px solid gray;
+  padding: 5px;
+  font-size: large;
+}
+.users:hover{
+  border-radius: 5px;
+  background-color: #dfdfdf;
+}
+.users:hover .delete-category{
+    display:inline;
+    height:fit-content;
+    position: absolute;
+    right: 2%;
+    /* position: relative; */
 }
 label{
   font-size: x-large;
 }
-#createUserForm,#editUserForm{
+#UserForm,#permissionForm{
   display: none;
 }
 .addUser{
@@ -96,6 +111,14 @@ label{
 }
 .permissions-list div{
 
+}
+.show-permission{
+  width:fit-content;
+  height: fit-content;
+  background-color: lightblue;
+  border: none;
+  border-radius: 5px;
+  font-size: medium;
 }
 .permissions-list li{
   text-align: left;

@@ -42,12 +42,12 @@ class UpdateUser extends React.Component {
     formData.lastName=user.lastName;
     formData.password="******";
     formData.email=user.email;
-    this.getUserPermissions(user.uid);
+    this.getUserPermissions(null,user.uid);
     // formData.permissions=[];
     this.setState({formData});
     var form=document.getElementById("UserForm");
     form.style.display="block";
-    form=document.getElementById("permissionsForm");
+    form=document.getElementById("permissionForm");
     form.style.display="block";
   }
   deleteUser = (e, uid) => {
@@ -59,8 +59,9 @@ class UpdateUser extends React.Component {
       }).then(
         res=>{
           var users=this.state.users;
-          users.filter(user=>user.uid===uid);
-          this.setState(users);
+          users=users.filter(user=>user.uid!==uid);
+          console.log(users);
+          this.setState({users},()=>{this.render()});
         }
       ).catch(
         err=>{
@@ -88,6 +89,8 @@ class UpdateUser extends React.Component {
         return null;
       });
   };
+  //1.fix one notation for getting permissions somwhere its true false else -1 make it clear on both ends and work accordingly
+  //2.for admin all trues should be there but there are falses as well
   createMenu = (menu) => {
     // console.log("inside create menu");
     if (!Array.isArray(menu) || menu.length <= 0) return null;
@@ -97,18 +100,6 @@ class UpdateUser extends React.Component {
         {menu.map((item, index) => {
           delete item.order;
           delete item.draft;
-          //console.log(item.permitted);
-          // console.log(item.hasOwnProperty("permitted"));
-          // if(! item.hasOwnProperty("permitted")){
-          //   console.log("existed");
-          //   item.permitted=false;
-          // }
-          // console.log(item.hasOwnProperty('permittied'));
-          // if ( ! item.hasOwnProperty('permittied')/*===false*/) {
-
-          //   console.log("changed");
-          //   item.permitted = false;
-          // }
           return (
             <div>
               <li key={item.link}>
@@ -120,6 +111,7 @@ class UpdateUser extends React.Component {
                   checked={item.permitted}
                 />
                 {item.name}
+                {item.link}
                 {this.createMenu(item.items)}
                 {/* </label> */}
               </li>
@@ -129,21 +121,26 @@ class UpdateUser extends React.Component {
       </ul>
     );
   };
-  getUserPermissions = (uid) => {
-    // e.stopPropagation();
+  getUserPermissions = (e,uid) => {
+    if(e){
+      e.stopPropagation();
+    }
     axios
-      .get(baseurl + "/awesome-editor/filesystem/permissions/"+uid, {
+      .get(baseurl + "awesome-editor/filesystem/permissions/"+uid, {
         headers: { authorization: "Bearer " + this.props.authToken },
       })
       .then((res) => {
         var permissions = res.data;
+        console.log(permissions);
         var formData=this.state.formData;
         formData.permissions=permissions;
-        this.setState({ formData });
+        this.setState({ formData },()=>{this.render()});
+        var form=document.getElementById("permissionForm");
+        form.style.display="block";
       })
       .catch((err) => {
-        console.log(err.response.data);
-        alert(err.response.data);
+        console.log(err.response);
+        alert(err.response);
       });
   };
   toggleCheckboxMarking = (item) => {
@@ -220,29 +217,30 @@ class UpdateUser extends React.Component {
         { headers: { authorization: "Bearer " + this.props.authToken } }
       )
       .then((res) => {
-        console.log(res);
+        console.log(res.data);
         alert("user created successfully");
-        var uid=res.data;
+        this.getUsers();
+        var uid=res.data.id;
+        console.log(uid);
         var formData = this.state.formData;
         if(formData.uid===""){
           formData.uid=uid;
-          this.getUserPermissions(uid);
-          var form = document.getElementById("UserForm");
-          form.style.display = "none";
-          form=document.getElementById("permissionsForm");
-          form.style.display="block";
+          this.getUserPermissions(null,uid);
+          // form=document.getElementById("permissionForm");
+          // form.style.display="block";
           alert("user creation successful");
         }
         else{
           alert("user data changed successful");
         }
-       form = document.getElementById("UserForm");
+       var form = document.getElementById("UserForm");
         form.style.display = "none";
-        this.getUsers();
+        
       })
-      .catch((err) => {
+      .catch(
+        (err) => {
         alert("cant create user");
-        // console.log(err.response.data);
+         console.log(err.response);
       });
   };
   displayCreateUser = (e) => {
@@ -251,16 +249,34 @@ class UpdateUser extends React.Component {
     var form = document.getElementById("UserForm");
     form.style.display = "block";
   };
-
+  // displayPermission=(permissions)=>{
+    
+  // }
+  cancelUserCreation=(e)=>{
+    e.stopPropagation();
+    var form=document.getElementById("UserForm");
+    form.style.display="none";
+    var form=document.getElementById("permissionForm");
+    form.style.display="none";
+    var formData=this.state.formData;
+    formData.uid="";
+    formData.email="";
+    formData.firstName="";
+    formData.lastName="";
+    formData.permissions=[];
+    this.setState({formData});
+  }
   setPermission = (e) => {
     e.preventDefault();
     axios.post(
-      baseurl + "/awesome-editor/filesystem/permissions/"+this.state.formData.uid,
+      baseurl + "awesome-editor/filesystem/permissions/"+this.state.formData.uid,
       this.state.formData.permissions, //type
       { headers: { authorization: "Bearer " + this.props.authToken } }
     ).then(
       res=>{
-        var form=document.getElementById("permissionsForm");
+        var form=document.getElementById("permissionForm");
+        form.style.display="none";
+        var form=document.getElementById("UserForm");
         form.style.display="none";
         var formData={
             firstName: "",
@@ -295,7 +311,7 @@ class UpdateUser extends React.Component {
 
         {this.state.users.length <= 0 ? null : (
           <div>
-            <div className="users-table">
+            <div className="users">
               <div>Name</div>
               <div>Email id</div>
               <div>permissions</div>
@@ -303,12 +319,12 @@ class UpdateUser extends React.Component {
             {this.state.users.map((user, index) => {
               return (
                 <div
-                  className="users-table"
+                  className="users"
                   onClick={(e) => this.setUser(e, user)}
                 >
                   <button
                     onClick={(e) => this.deleteUser(e,user.uid)}
-                    className=""
+                    className="delete-category"
                   >
                     <img
                       src="https://toppng.com/uploads/preview/free-recycle-bin-icon-vector-recycle-bin-icon-115534132079jvhnualpn.png"
@@ -318,26 +334,31 @@ class UpdateUser extends React.Component {
                   <div>{user.firstName + " " + user.lastName}</div>
                   <div>{user.email}</div>
                   <div>
-                    {this.state.formData.uid===user.uid ? (
-                      this.displayPermission(this.state.formData.permissions)
-                    ) : (
                       <button
                         className="show-permission"
-                        onClick={(e) => this.getUserPermissions(e, index)}
+                        onClick={(e) => this.getUserPermissions(e, user.uid)}
                       >
                         Get Permissions
                       </button>
-                     )}
                   </div>
                 </div>
               );
             })}
           </div>
         )}
-
+        <div id="permissionForm" className="permissionForm">
+          <form onSubmit={(e) => this.setPermission(e)}>
+            <label>
+              Permissions:
+              {this.createMenu(this.state.formData.permissions)}
+            </label>
+            {/* {console.log(this.state.formData.permissions)} */}
+            <input type="submit" value="Save" />
+          </form>
+        </div>
         <div id="UserForm">
           <div>
-            <h2>Enter details for new User</h2>
+            <h2>User Details</h2>
           </div>
           <form onSubmit={(e) => this.createUser(e)}>
             <label>
@@ -379,17 +400,8 @@ class UpdateUser extends React.Component {
                 onChange={(e) => this.valueChange(e)}
               />
             </label>
-            <input type="submit" value="Submit" />
-          </form>
-        </div>
-        <div className="permissionsForm">
-          <form onSubmit={(e) => this.setPermission(e)}>
-            <label>
-              Permissions:
-              {this.createMenu(this.state.formData.permissions)}
-            </label>
-            {/* {console.log(this.state.formData.permissions)} */}
-            <input type="submit" value="Submit" />
+            <input type="button" value="Cancel" onClick={e=>this.cancelUserCreation(e)}/>
+            <input type="submit" value="Save" />
           </form>
         </div>
       </div>
