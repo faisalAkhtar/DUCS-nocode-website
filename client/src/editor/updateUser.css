@@ -80,3 +80,23 @@
 .category-list-item:hover .delete-category{
   display: inline;
 }
+.users-table{
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+}
+label{
+  font-size: x-large;
+}
+#createUserForm,#editUserForm{
+  display: none;
+}
+.addUser{
+  width: fit-content;
+  /* background-color: white; */
+}
+.permissions-list div{
+
+}
+.permissions-list li{
+  text-align: left;
+}
