@@ -28,9 +28,11 @@ code {
 }
 .latest-news{
   width:100%;
+  padding: 10px;
 }
 .category-container{
   width:100%; 
+  padding: 10px;
 }
 .category-container li{
   list-style: none;
@@ -47,6 +49,7 @@ code {
 .news{
   width: 100%;
   overflow-y: scroll;
+  max-height: 90vh;
 }
 .news-item:hover{
   background-color: #e8e8e8;

@@ -14,27 +14,32 @@ class EditorApp extends React.Component {
   }
   componentDidMount() {
     if (!localStorage.getItem("accessToken")) this.setToken("", "");
-    else{
-    this.setToken(
-      localStorage.getItem("accessToken"),
-      localStorage.getItem("refreshToken")
-    );}
+    else {
+      this.setToken(
+        localStorage.getItem("accessToken"),
+        localStorage.getItem("refreshToken"),
+        JSON.parse(localStorage.getItem("userObj"))
+      );
+    }
   }
   //set current autorization token values on reciept in current state
-  setToken = (auth, refresh) => {
+  setToken = (auth, refresh, userObj) => {
+    console.log(userObj)
     this.setState({
       authToken: auth,
       refreshToken: refresh,
-    });
+      userObj,
+    }, () => this.render());
     if (auth === "" || refresh === "") {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
+      localStorage.removeItem("userObj");
     } else {
       localStorage.setItem("accessToken", auth);
       localStorage.setItem("refreshToken", refresh);
+      localStorage.setItem("userObj", JSON.stringify(userObj));
     }
     console.log("tokens set");
-    console.log(this.state.authToken);
   };
   //verify if the current token is valid or not
   verifyToken = () => {
@@ -55,10 +60,11 @@ class EditorApp extends React.Component {
     //if not then change url here only so not to show wrong thing there
     // if(this.state.authToken!=="")
     //     this.verifyToken();
+    // return <App logout={this.setToken} authToken={this.state.authToken} userObj={this.state.userObj}/>;
     return this.state.authToken === "" ? (
       <Login onSucc={this.setToken} />
     ) : (
-      <App logout={this.setToken} authToken={this.state.authToken} />
+      <App logout={this.setToken} authToken={this.state.authToken} userObj={this.state.userObj} />
     );
   }
 }

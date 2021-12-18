@@ -4,6 +4,8 @@ import "./admin.css";
 import UpdateMenu from "./UpdateMenu";
 import Editor from "./contentModifier2";
 import UpdateNotification from "./UpdateNotificaion";
+import UpdateUser from "./updateUser";
+import AccountSettings from "./AccountSettings";
 
 class App extends React.Component {
   action = (name) => {
@@ -14,25 +16,28 @@ class App extends React.Component {
   };
   logout = () => {
     console.log("logging out");
-    this.props.logout("", "");
+    this.props.logout("", "", {});
   };
   render() {
     return (
       <Switch>
         <Route path="/awesomeeditor/editFile">
-          <Editor authToken={this.props.authToken}/>
+          <Editor authToken={this.props.authToken} />
         </Route>
         <Route path="/awesomeeditor">
           <div className="container">
             <div className="left">
               <h1>Editor Options</h1>
               <hr />
-              <button
-                name="update-users"
-                onClick={(e) => this.action(e.target.name)}
-              >
-                Update Users
-              </button>
+              {this.props.userObj && this.props.userObj.isAdmin ? (
+                <button
+                  name="update-users"
+                  onClick={(e) => this.action(e.target.name)}
+                >
+                  Update Users
+                </button>
+              ) : null}
+
               <button
                 name="update-collection"
                 onClick={(e) => this.action(e.target.name)}
@@ -51,6 +56,12 @@ class App extends React.Component {
               >
                 Update Pages
               </button>
+              <button
+                name="settings"
+                onClick={(e) => this.action(e.target.name)}
+              >
+                Account Settings
+              </button>
               <button name="help" onClick={(e) => this.action(e.target.name)}>
                 Help,ContactUs
               </button>
@@ -59,7 +70,14 @@ class App extends React.Component {
             <div className="right">
               <Switch>
                 <Route path="/awesomeeditor/update-users">
-                  {() => <h1> this is update user page</h1>}
+                  {this.props.userObj && this.props.userObj.isAdmin ? (
+                    <UpdateUser
+                      authToken={this.props.authToken}
+                      logout={this.logout}
+                    />
+                  ) : <h1>Please Log in as admin</h1>}
+
+                  {/* {() => <h1> this is update user page</h1>} */}
                 </Route>
                 <Route path="/awesomeeditor/update-collection">
                   <h1> this is update collection page</h1>
@@ -67,10 +85,16 @@ class App extends React.Component {
                 <Route path="/awesomeeditor/help">
                   <h1> this is help page</h1>
                 </Route>
+                <Route path="/awesomeeditor/settings">
+                  <AccountSettings
+                    authToken={this.props.authToken}
+                    logout={this.logout}
+                  />
+                </Route>
                 <Route path="/awesomeeditor/update-notifications">
                   <UpdateNotification
-                  authToken={this.props.authToken}
-                  logout={this.logout}
+                    authToken={this.props.authToken}
+                    logout={this.logout}
                   />
                   {/* <h1> this is help page</h1> */}
                 </Route>
@@ -78,6 +102,7 @@ class App extends React.Component {
                   <UpdateMenu
                     authToken={this.props.authToken}
                     logout={this.logout}
+                    userObj={this.props.userObj}
                   />
                 </Route>
               </Switch>

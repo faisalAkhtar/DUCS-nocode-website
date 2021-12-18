@@ -8,7 +8,13 @@ import axios from "axios";
 import Paragraph from "../components/Paragraph";
 import Link from "../components/Link";
 import Image from "../components/Image";
+import Table from "../components/Table";
 import ImagePropertyModifier from "./ImagePropertyModifier"
+import TablePropertyModifier from "./TablePropertyModifier"
+import crypto from "crypto";
+import PreviewPopup from "./PreviewPopup";
+import Div from "../components/Div";
+import DivModifier from "./DivModifier";
 
 class Editor extends React.Component {
   constructor(props) {
@@ -17,6 +23,8 @@ class Editor extends React.Component {
       file: [],
       addIndex: -1,
       selected: -1,
+      itemSelect: null,
+      previewPopup:false,
     };
   }
   shouldComponentUpdate(nextProps, nextState) {
@@ -25,7 +33,8 @@ class Editor extends React.Component {
   }
   equals = (next, current) => {
     console.log(next);
-    console.log(current);
+    console.log(JSON.stringify(current));
+
     if (next.addIndex !== -1 || next.selected === current.selected)
       //no issues in these cases u can directly rerender on state change
       return false;
@@ -54,14 +63,18 @@ class Editor extends React.Component {
   };
   itemSelected = (index) => {
     //console.log(index);
-    console.log(this.state.file[index].constructor.name);
+    if(this.state.selected!==-1){
+      document.getElementById(this.state.selected).className="item selectItem";
+    }
+    //console.log(this.state.file[index].constructor.name);
     this.setState({ addIndex: -1, selected: parseInt(index) }, () => {
       console.log("from callback " + this.state.selected);
       this.render();
     }); //id of selected component on display page
     //id is same as index of element in file array
-
-    // document.getElementById(event.target.id).style.boxShadow="3px 3px grey";
+    document.getElementById(index).className="item selectedItem";
+    // document.getElementById(index).style.borderRadius="10px";
+    // document.getElementById(index).style.boxShadow="3px 3px grey";
   };
   titleComponentModifier = (modifierState) => {
     var file = this.state.file;
@@ -98,7 +111,29 @@ class Editor extends React.Component {
     var file = this.state.file;
     var Element = file[this.state.selected];
     Element = (
-      <Image id={modifierState.id} source={modifierState.value}/>
+      <Image id={modifierState.id} source={modifierState.value} css={modifierState.css}/>
+    );
+    file[this.state.selected] = Element;
+    this.setState({ file }, () => {
+      this.render();
+    });
+  };
+  tableComponentModifier = (modifierState) => {
+    var file = this.state.file;
+    var Element = file[this.state.selected];
+    Element = (
+      <Table id={modifierState.id} rows={modifierState.rows} cols={modifierState.cols}>{modifierState.children}</Table>
+    );
+    file[this.state.selected] = Element;
+    this.setState({ file }, () => {
+      this.render();
+    });
+  };
+  divComponentModifier = (modifierState) => {
+    var file = this.state.file;
+    var Element = file[this.state.selected];
+    Element = (
+      <Div id={modifierState.id} >{modifierState.children}</Div>
     );
     file[this.state.selected] = Element;
     this.setState({ file }, () => {
@@ -124,62 +159,79 @@ class Editor extends React.Component {
       </div>
     );
   };
+  itemFocusGained=(e,item)=>{
+    this.setState({"itemSelect" : item});
+  }
   displayFile = () => {
     //function to display whole file in modifiable form
     return this.state.file.map((item, index) => {
       return (
-        <div className="item" key={index}>
+        <div className="item-container" key={index}>
           <div
-            className="selectedItem"
+            className="item selectItem"
             id={index}
             onClick={(e) => this.itemSelected(index)}
+            onFocus={(e) => this.itemFocusGained(e,item)}
           >
-            {" "}
-            {/*selectedItemto show currently selected item and make left pane to show its properties*/}
-            {item}
+            {item.type.name==="Div"?this.displayFile(item.props.children):item}
           </div>
           {this.addLine(index + 1)}
         </div>
       );
     });
   };
-
-  componentClicked = (event, itemType) => {
+  componentClicked = (event, itemType) => { //function to handle click for new component addition
     if (this.state.addIndex < 0) return;
     var file = [...this.state.file];
     var selected = this.state.addIndex;
+    var id=crypto.randomBytes(8).toString("hex");
     switch (itemType) {
       case "title":
         file.splice(
           this.state.addIndex,
           0,
-          <Title id="Main-title"> Title For page</Title>
+          <Title id={"title-"+id}> Title For page</Title>
         );
         break;
       case "paragraph":
         file.splice(
           this.state.addIndex,
           0,
-          <Paragraph id="paragraph"> Title For page</Paragraph>
+          <Paragraph id={"paragraph-"+id}> Title For page</Paragraph>
         );
         break;
       case "image":
         file.splice(
           this.state.addIndex,
           0,
-          <Image id="Main-title" source=""/>
+          <Image id={"image-"+id} source="" css={{width:"30",/*height:"30"*/}}/>
         );
         break;
       case "link":
         file.splice(
           this.state.addIndex,
           0,
-          <Link id="defaultlink" href="">Your link</Link>
+          <Link id={"link-"+id} href="">Your link</Link>
+        );
+        break;
+      case "table":
+        file.splice(
+          this.state.addIndex,
+          0,
+          <Table id={"table-"+id} rows="0" cols="0"></Table>
+        );
+        break;
+      case "table":
+        file.splice(
+          this.state.addIndex,
+          0,
+          <Div id={"div-"+id} ></Div>
         );
         break;
     }
-    this.setState({ file, selected, addIndex: -1 }, () => {
+    this.setState({ file, addIndex: -1 }, () => {
       this.render();
+      this.itemSelected(selected);
     });
     // this.setState({ selected : this.state.addIndex },()=>{this.render()});
     // this.setState({ addIndex: -1 },()=>{this.render()});
@@ -220,8 +272,27 @@ class Editor extends React.Component {
             />
           );
           break;
+      case "Table":
+          return (
+             <TablePropertyModifier
+                object={selectedobject}
+                work={this.tableComponentModifier}
+              />
+            );
+            break;
+      case "Div":
+          return (
+             <DivModifier
+                object={selectedobject}
+                work={this.divComponentModifier}
+              />
+            );
+            break;
     }
   };
+  togglePreviewPopup=()=>{
+    this.setState({"previewPopup":!(this.state.previewPopup)});
+  }
   // componentDidMount(){
   //   axios.get(baseurl+""//addfilename here).then(
   //     {
@@ -236,12 +307,13 @@ class Editor extends React.Component {
     console.log("render");
     return (
       <div className="editorcontainer">
+        {this.state.previewPopup ? <PreviewPopup close={this.togglePreviewPopup} page={this.state.file}/> : null}
         <div className="editorHeader">
           <p className="fileNameText">filename</p>
           <button id="savefile" className="saveFileButton">
             Save
           </button>
-          <button id="preview" className="previewButton">
+          <button id="preview" className="previewButton" onClick={(e)=>this.togglePreviewPopup()}>
             Preview
           </button>
         </div>
@@ -298,6 +370,28 @@ class Editor extends React.Component {
                         alt="pictreicon"
                       />
                       Image
+                    </button>
+                    <button
+                      className="icon"
+                      onClick={(e) => this.componentClicked(e, "table")}
+                      id="table-icon"
+                    >
+                      <img
+                        src="https://cdn3.iconfinder.com/data/icons/files-folders-line/100/spreadsheet-512.png"
+                        alt="tableicon"
+                      />
+                      Table
+                    </button>
+                    <button
+                      className="icon"
+                      onClick={(e) => this.componentClicked(e, "div")}
+                      id="div-icon"
+                    >
+                      <img
+                        src="https://lh3.googleusercontent.com/proxy/4Qs69ZbNsZ7GTr6mIiDe16O6i0fn01EAUHVMWDZx1Rr5gyCEAz7r_jyojvXiALyJ3vMiHB8KfZ_ral32TAMiOZlTfSpZlD20mYZuGUyg"
+                        alt="divicon"
+                      />
+                      Div
                     </button>
                   </div>
                 </div>

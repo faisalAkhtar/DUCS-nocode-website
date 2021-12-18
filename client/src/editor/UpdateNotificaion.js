@@ -174,7 +174,7 @@ class UpdateNotification extends React.Component {
                   className="category"
                   key={category.id}
                   onClick={(e)=>this.fetchNotices(category.category)}
-                  style={category.id===this.state.selectedCategory?{backgroundColor:"lightpink"}:null}
+                  style={category.category===this.state.selectedCategory?{backgroundColor:"lightpink"}:null}
                 >
                   {category.category}
                 </button>
