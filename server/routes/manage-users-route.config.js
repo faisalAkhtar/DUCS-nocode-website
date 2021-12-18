@@ -10,7 +10,12 @@ exports.routeConfig = function (app) {
 
     app.put('/user', [
         ValidationMiddleware.validateJWT,
-        UserController.updateSelf
+        UserController.updateDetails
+    ])
+
+    app.put('/user/password', [
+        ValidationMiddleware.validateJWT,
+        UserController.updatePassword
     ])
 
     app.get('/users', [

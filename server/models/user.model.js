@@ -79,13 +79,24 @@ exports.deleteUser = function (uid, callbackFunc) {
         )
 }
 
-exports.updateUser = function (uid, { firstName, lastName, email, password }, callbackFunc) {
+exports.updateUser = function (uid, { firstName, lastName, email }, callbackFunc) {
     var userCollection = db.get().collection('users')
 
     userCollection
         .updateOne(
             { _id: new mongo.ObjectId(uid) },
-            { $set: { firstName, lastName, email, password } },
+            { $set: { firstName, lastName, email } },
+            (err, result) => callbackFunc(err, result)
+        )
+}
+
+exports.updateUserPass = function (uid, password, callbackFunc) {
+    var userCollection = db.get().collection('users')
+
+    userCollection
+        .updateOne(
+            { _id: new mongo.ObjectId(uid) },
+            { $set: { password } },
             (err, result) => callbackFunc(err, result)
         )
 }
