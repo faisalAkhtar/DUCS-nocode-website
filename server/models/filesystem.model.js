@@ -1,14 +1,31 @@
 var db = require('../utils/db')
+var mongo = require('mongodb')
 
 exports.list = function (callbackFunc) {
     var filesystemCollection = db.get().collection('filesystem')
     filesystemCollection
         .find()
         .sort({ order: 1 })
-        .toArray((err, docs) => callbackFunc(err, docs))
+        .toArray((err, docs) => {
+            if (err)
+                return callbackFunc(err, null)
+
+            docs.map(menu => {
+                menu['id'] = menu._id
+                delete menu._id
+                delete menu.permission
+                menu.items && menu.items.map(sub => {
+                    if (sub.type == "menu") {
+                        delete sub.permission
+                    }
+                })
+            })
+
+            return callbackFunc(err, docs)
+        })
 }
 
-exports.fileExists = function (address, type, callbackFunc) {
+exports.existsAndPermitted = function (address, type, uid, isAdmin, callbackFunc) {
     var filesystemCollection = db.get().collection('filesystem')
     // finding document in address[0]
     filesystemCollection
@@ -20,18 +37,27 @@ exports.fileExists = function (address, type, callbackFunc) {
                     return callbackFunc(-2)
                 }
 
+                // get permissions
+                let permitted = false || isAdmin
+
                 // document NOT found from address[0]
                 if (!doc) {
-                    if (address.length === 1)
+                    if (address.length === 1) {
+                        if (!permitted)
+                            return callbackFunc(-3)
                         return callbackFunc(0)
-                    else return callbackFunc(-1)
+                    }
+                    return callbackFunc(-1)
                 }
+                permitted = (doc.permission ? (doc.permission.indexOf(uid) > -1) : false) || isAdmin
 
                 // document found from address[0]
                 // address.length === 1 means our search is over
-                if (address.length === 1 && type === doc.type)
+                if (address.length === 1 && type === doc.type) {
+                    if (!permitted)
+                        return callbackFunc(-3)
                     return callbackFunc(1)
-                else if (doc.type !== "menu")
+                } else if (doc.type !== "menu")
                     return callbackFunc(-1)
 
                 // finding document from address[1]
@@ -46,18 +72,26 @@ exports.fileExists = function (address, type, callbackFunc) {
                     }
                 }
 
+                // update permissions
+                if (!permitted) permitted = doc.permission ? (doc.permission.indexOf(uid) > -1) : false
+
                 // document NOT found from address[1]
                 if (!found) {
-                    if (address.length === 2)
+                    if (address.length === 2) {
+                        if (!permitted)
+                            return callbackFunc(-3)
                         return callbackFunc(0)
-                    else return callbackFunc(-1)
+                    }
+                    return callbackFunc(-1)
                 }
 
                 // document found from address[1]
                 // address.length === 2 means our search is over
-                if (address.length === 2 && type === doc.type)
+                if (address.length === 2 && type === doc.type) {
+                    if (!permitted)
+                        return callbackFunc(-3)
                     return callbackFunc(1)
-                else if (doc.type !== "menu")
+                } else if (doc.type !== "menu")
                     return callbackFunc(-1)
 
                 // finding document from address[2]
@@ -66,17 +100,26 @@ exports.fileExists = function (address, type, callbackFunc) {
                     for (const it of doc.items) {
                         if (it.link === address[2]) {
                             found = true
+                            doc = it
                             break
                         }
                     }
                 }
 
+                // update permissions
+                if (!permitted) permitted = doc.permission ? (doc.permission.indexOf(uid) > -1) : false
+
                 // document NOT found from address[2]
-                if (!found && type === 'page')
+                if (!found && type === 'page') {
+                    if (!permitted)
+                        return callbackFunc(-3)
                     return callbackFunc(0)
+                }
 
                 // document found from address[2]
                 // address.length === 3 means our search is over
+                if (!permitted)
+                    return callbackFunc(-3)
                 return callbackFunc(1)
             }
         )
@@ -321,6 +364,183 @@ exports.changeOrder = function (newOrder, callbackFunc) {
             }
 
             return callbackFunc(null, docs)
+        }
+    )
+}
+
+exports.getPermissions = function (uid, callbackFunc) {
+    var filesystemCollection = db.get().collection('filesystem')
+    filesystemCollection.find().toArray(
+        (err, docs) => {
+            if (err) return callbackFunc(err)
+
+            docs.forEach(menu => {
+                menu['id'] = menu._id
+                menu['permitted'] = !!menu.permission ? menu.permission.indexOf(uid) > -1 : false
+                delete menu._id
+                delete menu.permission
+                menu.items && (
+                    menu.items.forEach(sub => {
+                        delete sub.permission
+                        sub.items && (
+                            sub.items.forEach(tri => {
+                                delete tri.permission
+                            })
+                        )
+                    })
+                )
+            })
+
+            return callbackFunc(err, docs)
+        }
+    )
+}
+
+exports.updatePermissions = function (uid, newPermissions, callbackFunc) {
+    let sorterFunc = function (a, b) {
+        let la = a.link.toLowerCase(),
+            lb = b.link.toLowerCase()
+        if (la < lb) return -1
+        if (la > lb) return 1
+        return 0
+    }
+
+    newPermissions.sort(sorterFunc)
+
+    var filesystemCollection = db.get().collection('filesystem')
+    filesystemCollection.find().toArray(
+        (err, docs) => {
+            if (err) return callbackFunc(err)
+
+            if (docs.length !== newPermissions.length)
+                return callbackFunc('Invalid structure provided')
+
+            docs.sort(sorterFunc)
+            for (let it = 0; it < docs.length; it++) {
+                if (docs[it].link !== newPermissions[it].link) {
+                    return callbackFunc('Invalid structure provided')
+                }
+                if (newPermissions[it].permitted) {
+                    if (docs[it].permission)
+                        docs[it].permission.push(uid)
+                    else docs[it]['permission'] = [uid]
+                } else if (docs[it].permission) {
+                    let ind = docs[it].permission.indexOf(uid)
+                    if (ind > -1)
+                        docs[it].permission.splice(ind, 1)
+                }
+
+                if (docs[it].type === 'menu' && docs[it].items) {
+                    docs[it].items.sort(sorterFunc)
+                    newPermissions[it].items.sort(sorterFunc)
+                    for (let jt = 0; jt < docs[it].items.length; jt++) {
+                        if (docs[it].items[jt].link !== newPermissions[it].items[jt].link) {
+                            return callbackFunc('Invalid structure provided')
+                        }
+                        if (newPermissions[it].items[jt].permitted) {
+                            if (docs[it].items[jt].permission)
+                                docs[it].items[jt].permission.push(uid)
+                            else docs[it].items[jt]['permission'] = [uid]
+                        } else if (docs[it].items[jt].permission) {
+                            let ind = docs[it].items[jt].permission.indexOf(uid)
+                            if (ind > -1)
+                                docs[it].items[jt].permission.splice(ind, 1)
+                        }
+
+                        if (docs[it].items[jt].type === 'menu' && docs[it].items[jt].items) {
+                            docs[it].items[jt].items.sort(sorterFunc)
+                            newPermissions[it].items[jt].items.sort(sorterFunc)
+                            for (let kt = 0; kt < docs[it].items[jt].items.length; kt++) {
+                                if (docs[it].items[jt].items[kt].link !== newPermissions[it].items[jt].items[kt].link) {
+                                    return callbackFunc('Invalid structure provided')
+                                }
+                                if (newPermissions[it].items[jt].items[kt].permitted) {
+                                    if (docs[it].items[jt].items[kt].permission)
+                                        docs[it].items[jt].items[kt].permission.push(uid)
+                                    else docs[it].items[jt].items[kt]['permission'] = [uid]
+                                } else if (docs[it].items[jt].items[kt].permission) {
+                                    let ind = docs[it].items[jt].items[kt].permission.indexOf(uid)
+                                    if (ind > 1)
+                                        docs[it].items[jt].items[kt].permission.splice(ind, 1)
+                                }
+                            }
+                        }
+
+                    }
+
+                    filesystemCollection.updateOne(
+                        { link: docs[it].link },
+                        { $set: { permission: docs[it].permission, items: docs[it].items } },
+                        (err, res) => {
+                            if (err) return callbackFunc(err)
+                        }
+                    )
+                } else {
+                    filesystemCollection.updateOne(
+                        { link: docs[it].link },
+                        { $set: { permission: docs[it].permission } },
+                        (err, res) => {
+                            if (err) return callbackFunc(err)
+                        }
+                    )
+                }
+
+            }
+
+            return callbackFunc(null, docs)
+        }
+    )
+}
+
+
+exports.deletePermissions = function (uid, callbackFunc) {
+    var filesystemCollection = db.get().collection('filesystem')
+    filesystemCollection.find().toArray(
+        (err, docs) => {
+            if (err) return callbackFunc(err)
+
+            docs.forEach(menu => {
+                if (menu.permission) {
+                    let ind = menu.permission.indexOf(uid)
+                    if (ind > -1) menu.permission.splice(ind, 1)
+                }
+
+                if (menu.items) {
+                    menu.items.forEach(sub => {
+                        if (sub.permission) {
+                            let ind = sub.permission.indexOf(uid)
+                            if (ind > -1) sub.permission.splice(ind, 1)
+                        }
+
+                        if (sub.items) {
+                            sub.items.forEach(tri => {
+                                if (tri.permission) {
+                                    let ind = tri.permission.indexOf(uid)
+                                    if (ind > -1) tri.permission.splice(ind, 1)
+                                }
+                            })
+                        }
+                    })
+
+                    filesystemCollection.updateOne(
+                        { _id: new mongo.ObjectId(menu._id) },
+                        { $set: { permission: menu.permission, items: menu.items } },
+                        (err, res) => {
+                            if (err) return callbackFunc(err)
+                        }
+                    )
+                } else {
+                    filesystemCollection.updateOne(
+                        { _id: new mongo.ObjectId(menu._id) },
+                        { $set: { permission: menu.permission } },
+                        (err, res) => {
+                            if (err) return callbackFunc(err)
+                        }
+                    )
+                }
+            })
+
+            return callbackFunc(null, null)
         }
     )
 }

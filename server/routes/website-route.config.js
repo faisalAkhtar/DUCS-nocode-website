@@ -1,6 +1,5 @@
 const Utilities = require('../controllers/UtilityFileServer')
 const Pages = require('../controllers/PageServer')
-const Notifications = require('../controllers/NotificationServer')
 
 exports.routeConfig = function (app) {
     app.get('/util/:item', [

@@ -35,3 +35,9 @@ exports.validRefreshNeeded = (req, res, next) => {
         return res.status(400).send('Invalid refresh token')
     }
 }
+
+exports.adminOnly = (req, res, next) => {
+    if (req.jwt.isAdmin)
+        next()
+    else return res.status(403).json({ msg: "Admin privileges required" })
+}

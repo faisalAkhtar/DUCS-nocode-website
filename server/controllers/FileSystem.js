@@ -7,17 +7,6 @@ exports.GetFilesystem = function (req, res, next) {
         (err, docs) => {
             if (err)
                 return res.status(500).json({ "msg": err })
-
-            docs.map(menu => {
-                delete menu._id
-                delete menu.permission
-                menu.items && menu.items.map(sub => {
-                    if (sub.type == "menu") {
-                        delete sub.permission
-                    }
-                })
-            })
-
             return res.send(docs)
         }
     )
@@ -188,7 +177,52 @@ exports.ChangeItemOrder = function (req, res, next) {
         (err, result) => {
             if (err)
                 return res.status(400).json({ "msg": err })
-            return res.status(200).send(result)
+            return res.status(200).json(result)
+        }
+    )
+}
+
+exports.GetCurrentUsersPermissions = function (req, res, next) {
+    FilesystemModal.getPermissions(req.jwt.userId,
+        (err, docs) => {
+            if (err)
+                return res.status(400).json({ "msg": err })
+            return res.status(200).json(docs)
+        }
+    )
+}
+
+exports.GetUsersPermissions = function (req, res, next) {
+    let id = req.params.uid
+
+    if (!/[0-9A-Fa-f]{24}/g.test(id))
+        return res.status(400).json({ msg: "Provide a valid ID" })
+
+    FilesystemModal.getPermissions(id,
+        (err, docs) => {
+            if (err)
+                return res.status(400).json({ "msg": err })
+            return res.status(200).json(docs)
+        }
+    )
+}
+
+exports.UpdateUsersPermissions = function (req, res, next) {
+    let id = req.params.uid
+
+    if (!/[0-9A-Fa-f]{24}/g.test(id))
+        return res.status(400).json({ msg: "Provide a valid ID" })
+
+    let newPermissions = req.body
+
+    if (!newPermissions || typeof (newPermissions) !== 'object')
+        return res.status(400).json({ "msg": "Invalid body sent" })
+
+    FilesystemModal.updatePermissions(id, newPermissions,
+        (err, result) => {
+            if (err)
+                return res.status(400).json({ "msg": err })
+            return res.status(200).send()
         }
     )
 }
