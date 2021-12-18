@@ -379,25 +379,15 @@ exports.getPermissions = function (uid, callbackFunc) {
                 menu['permitted'] = !!menu.permission ? menu.permission.indexOf(uid) > -1 : false
                 delete menu._id
                 delete menu.permission
-                delete menu.name
-                menu.items ? (
+                menu.items && (
                     menu.items.forEach(sub => {
-                        sub['permitted'] = menu.permitted || (!!sub.permission ? sub.permission.indexOf(uid) : false)
                         delete sub.permission
-                        delete sub.name
-                        sub.items ? (
+                        sub.items && (
                             sub.items.forEach(tri => {
-                                tri['permitted'] = menu.permitted || sub.permitted || (!!tri.permission ? tri.permission.indexOf(uid) : false)
                                 delete tri.permission
-                                delete tri.name
-                                delete tri.draft
                             })
-                        ) : (
-                            delete sub.draft
                         )
                     })
-                ) : (
-                    delete menu.draft
                 )
             })
 

@@ -53,15 +53,18 @@ exports.getAllUsers = function (callbackFunc) {
         .find()
         .toArray((err, docs) => {
             if (err) return callbackFunc(err, null)
-            docs.forEach(user => {
-                user['uid'] = user._id
-                if (user.isAdmin)
-                    user['role'] = 'admin'
-                else user['role'] = 'editor'
-                delete user._id
-                delete user.isAdmin
-                delete user.password
+            let admInd = -1
+            docs.forEach((user, ind) => {
+                if (user.isAdmin) {
+                    admInd = ind
+                } else {
+                    user['uid'] = user._id
+                    delete user._id
+                    delete user.isAdmin
+                    delete user.password
+                }
             })
+            docs.splice(admInd, 1)
             return callbackFunc(err, docs)
         })
 }
