@@ -24,7 +24,7 @@ class UpdateMenu extends React.Component {
   };
   componentDidMount() {
     axios
-      .get(baseurl + "awesome-editor/filesystem", {
+      .get(baseurl + "awesome-editor/filesystem/permissions", {
         headers: { authorization: "Bearer " + this.props.authToken },
       })
       .then((res) => {
@@ -33,6 +33,17 @@ class UpdateMenu extends React.Component {
         this.setState({ oldMenu: data }); //change name of data object as provided in response
         this.setState({ newMenu: data2 });
       });
+    // axios.get(baseurl+"awesome-editor/filesystem/permissions",{
+    //   headers: { authorization: "Bearer " + this.props.authToken },
+    // }).then(
+    //   res=>{
+
+    //   }
+    // ).catch(
+    //   err=>{
+    //     alert("permissions not fetched");
+    //   }
+    // )
   }
   toggleAddPopup = () => {
     this.setState({ addPopUp: !this.state.addPopUp });
@@ -62,8 +73,7 @@ class UpdateMenu extends React.Component {
       toAdd.order = this.state.newMenu.items
         ? this.state.newMenu.length + 1
         : 1;
-        if(!this.state.newMenu.items)
-            this.state.newMenu.items=[]
+      if (!this.state.newMenu.items) this.state.newMenu.items = [];
       this.state.newMenu.push(toAdd);
     } else if (parent.length === 1) {
       var obj = this.state.newMenu.filter(
@@ -71,8 +81,7 @@ class UpdateMenu extends React.Component {
       );
       console.log(obj);
       toAdd.order = obj[0].items ? obj[0].items.length + 1 : 1;
-      if(!obj[0].items)
-            obj[0].items=[]
+      if (!obj[0].items) obj[0].items = [];
       obj[0].items.push(toAdd);
     } else if (parent.length === 2) {
       console.log(parent[0]);
@@ -84,8 +93,7 @@ class UpdateMenu extends React.Component {
       );
       console.log(obj2);
       toAdd.order = obj2[0].items ? obj2[0].items.length + 1 : 1;
-      if(!obj2[0].items)
-            obj2[0].items=[]
+      if (!obj2[0].items) obj2[0].items = [];
       obj2[0].items.push(toAdd);
     }
     //this.render();
@@ -103,7 +111,9 @@ class UpdateMenu extends React.Component {
       .then((res) => {
         let oldMenu = JSON.parse(JSON.stringify(this.state.newMenu));
         this.setState({ oldMenu });
-        alert(type==="page"?"Page":"menu"+" added successfully to this menu");
+        alert(
+          type === "page" ? "Page" : "menu" + " added successfully to this menu"
+        );
       })
       .catch((err) => {
         let newMenu = JSON.parse(JSON.stringify(this.state.oldMenu));
@@ -181,16 +191,17 @@ class UpdateMenu extends React.Component {
           });
       })
       .catch((err) => {
-          console.log(err.response.data)
+        console.log(err.response.data);
         alert("cant update");
       });
   };
-  openInEditor=(filename)=>{
+  openInEditor = (filename,permission) => {
     // window.location.href
-    console.log(filename)
-    this.props.history.push("/awesomeeditor/editfile/" +filename.join("/"));
-  }
-  createMenu = (Menu, parent, level) => {
+    if(!permission) return;
+    console.log(filename);
+    this.props.history.push("/awesomeeditor/editfile/" + filename.join("/"));
+  };
+  createMenu = (Menu, parent, level,parentPermission) => {
     if (!Array.isArray(Menu)) return null;
     Menu.sort((a, b) => (a.order > b.order ? 1 : -1));
     return (
@@ -200,58 +211,78 @@ class UpdateMenu extends React.Component {
             return (
               <li key={menuitem.link}>
                 {" "}
-                <> {menuitem.name} </>
-                <div className="editbuttons">
-                <button className="editbuttonsdropdown">&#10247;</button>
-                <div className="editoptions">
-                <DeleteButton
-                  address={parent.concat(menuitem.link)}
-                  delete={this.delete}
-                  type="menu"
-                />
-                <UpdateButton
-                  address={parent.concat(menuitem.link)}
-                  toggle={this.toggleUpdatePopup}
-                  lastclicked={this.changeLastClick}
-                  order={menuitem.order}
-                  draft={menuitem.draft}
-                  name={menuitem.name}
-                  type="menu"
-                />
-                <AddButton
-                  parent={parent.concat(menuitem.link)}
-                  toggle={this.toggleAddPopup}
-                  lastclicked={this.changeLastClick}
-                /></div></div>
-                {this.createMenu(
-                  menuitem.items,
-                  parent.concat(menuitem.link),
-                  level + 1
-                )}
+                <details>
+                  <summary>
+                    {" "}
+                    {menuitem.name}
+                    {(this.props.userObj && this.props.userObj.isAdmin) ||
+                    menuitem.permitted || parentPermission? (
+                      <div className="editbuttons">
+                        <button className="editbuttonsdropdown">
+                          &#10247;
+                        </button>
+                        <div className="editoptions">
+                          <DeleteButton
+                            address={parent.concat(menuitem.link)}
+                            delete={this.delete}
+                            type="menu"
+                          />
+                          <UpdateButton
+                            address={parent.concat(menuitem.link)}
+                            toggle={this.toggleUpdatePopup}
+                            lastclicked={this.changeLastClick}
+                            order={menuitem.order}
+                            draft={menuitem.draft}
+                            name={menuitem.name}
+                            type="menu"
+                          />
+                          <AddButton
+                            parent={parent.concat(menuitem.link)}
+                            toggle={this.toggleAddPopup}
+                            lastclicked={this.changeLastClick}
+                          />
+                        </div>
+                      </div>
+                    ) : null}
+                  </summary>
+
+                  {this.createMenu(
+                    menuitem.items,
+                    parent.concat(menuitem.link),
+                    level + 1,
+                    parentPermission||menuitem.permitted
+                  )}
+                </details>
               </li>
             );
           } else {
             return (
               <li key={menuitem.link}>
-                {" "}
-                <p onDoubleClick={(e)=>this.openInEditor(parent.concat(menuitem.link))} style={{display:"inline"}}>{menuitem.name}</p>
+                  {menuitem.name}
+                {
+                  (this.props.userObj && this.props.userObj.isAdmin) || menuitem.permitted || parentPermission ?
                 <div className="editbuttons">
-                <button className="editbuttonsdropdown">&#10247;</button>
-                <div className="editoptions">
-                <DeleteButton
-                  address={parent.concat(menuitem.link)}
-                  delete={this.delete}
-                  type="page"
-                />
-                <UpdateButton
-                  address={parent.concat(menuitem.link)}
-                  toggle={this.toggleUpdatePopup}
-                  lastclicked={this.changeLastClick}
-                  order={menuitem.order}
-                  draft={menuitem.draft}
-                  name={menuitem.name}
-                  type="page"
-                /></div></div>
+                  <button className="editbuttonsdropdown">&#10247;</button>
+                  <div className="editoptions">
+                    <button className="add" onClick={(e) =>
+                    this.openInEditor(parent.concat(menuitem.link),menuitem.permitted)}>Edit</button>
+                    <DeleteButton
+                      address={parent.concat(menuitem.link)}
+                      delete={this.delete}
+                      type="page"
+                    />
+                    <UpdateButton
+                      address={parent.concat(menuitem.link)}
+                      toggle={this.toggleUpdatePopup}
+                      lastclicked={this.changeLastClick}
+                      order={menuitem.order}
+                      draft={menuitem.draft}
+                      name={menuitem.name}
+                      type="page"
+                    />
+                  </div>
+                </div>
+                :null}
               </li>
             );
           }
@@ -273,19 +304,21 @@ class UpdateMenu extends React.Component {
           <div className="menucreator">
             <div className="heading">
               <h1 className="head">FileSystem</h1>
-              <div className="addbutton">
-                <button className="move" onClick={(e) => this.toggleMove()}>
-                  Move
-                </button>
-                <AddButton
-                  parent={[]}
-                  toggle={this.toggleAddPopup}
-                  lastclicked={this.changeLastClick}
-                />
-              </div>
+              {this.props.userObj && this.props.userObj.isAdmin ? (
+                <div className="addbutton">
+                  <button className="move" onClick={(e) => this.toggleMove()}>
+                    Move
+                  </button>
+                  <AddButton
+                    parent={[]}
+                    toggle={this.toggleAddPopup}
+                    lastclicked={this.changeLastClick}
+                  />
+                </div>
+              ) : null}
             </div>
             <div className="menu">
-              {this.createMenu(this.state.oldMenu, [], 0)}
+              {this.createMenu(this.state.oldMenu, [], 0,false)}
             </div>
             {this.state.addPopUp ? (
               <AddPop

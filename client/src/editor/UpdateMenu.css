@@ -101,3 +101,11 @@ li{
     position: absolute;
     z-index: 50;
 }
+summary{
+   cursor: pointer;
+   /* list-style: none; */
+}
+::marker{
+    /* color: transparent; */
+    font-size: medium;
+}

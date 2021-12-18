@@ -84,7 +84,7 @@ class AccountSettings extends React.Component {
   changePassword=(e)=>{
     e.preventDefault();
     axios
-    .put(baseurl + "user/password", this.state.password, {
+    .put(baseurl + "user/password", {password:this.state.password}, {
       headers: { authorization: "Bearer " + this.props.authToken },
     })
     .then((res) => {
