@@ -13,6 +13,7 @@
 .table{
     display: grid;
     gap: 10px;
+    float: left;
 }
 .Div{
     display:inline;

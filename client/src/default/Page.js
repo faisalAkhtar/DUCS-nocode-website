@@ -7,6 +7,7 @@ import Table from "../components/Table";
 import Paragraph from "../components/Paragraph";
 import Link from "../components/Link";
 import Div from "../components/Div";
+import ImageGallery from "../components/ImageGallery";
 
 const baseurl="http://localhost:5000/"
 class Page extends React.Component{
@@ -24,6 +25,9 @@ class Page extends React.Component{
             }
         ).catch(
             (err)=>{
+              this.setState({
+                markup:[{"id": "divaf1b1c644c2089ac","type": "div","props": {"css": {"width": "100%"},"children": [{"id": "paragraph81acedefb2bcb641","type": "paragraph","props": {"children": "Error : 404"}},{"id": "paragraphb6411acedef8b2bc","type": "paragraph","props": {"children": "Page Not Found"}},{"id": "link81acedefb2bcb641","type": "link","props": {"href": "/","children": "Go To Home"}}]}}]
+              })
                 console.log(err.message);
             }
         );
@@ -49,6 +53,7 @@ class Page extends React.Component{
               </Div>
             ),
             table:(<Table id={item.id} rows={item.props.rows} cols={item.props.cols}>{item.props.children}</Table>),
+            imageGallery:<ImageGallery id={item.id} imageLinks={item.props.imageLinks}/>
           }[item.type]
         })
       }
