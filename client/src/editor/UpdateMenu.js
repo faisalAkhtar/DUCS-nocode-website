@@ -197,7 +197,8 @@ class UpdateMenu extends React.Component {
   };
   openInEditor = (filename,permission) => {
     // window.location.href
-    if(!permission) return;
+    console.log("inside open in editor "+filename+" "+permission)
+    if(!this.props.userObj.isAdmin && !permission) return;
     console.log(filename);
     this.props.history.push("/awesomeeditor/editfile/" + filename.join("/"));
   };
@@ -264,8 +265,11 @@ class UpdateMenu extends React.Component {
                 <div className="editbuttons">
                   <button className="editbuttonsdropdown">&#10247;</button>
                   <div className="editoptions">
-                    <button className="add" onClick={(e) =>
-                    this.openInEditor(parent.concat(menuitem.link),menuitem.permitted)}>Edit</button>
+                    <button className="add" onClick={(e) =>{
+                      console.log(parentPermission+" "+menuitem.permitted)
+                      this.openInEditor(parent.concat(menuitem.link),parentPermission||menuitem.permitted)
+                    }
+                    }>Edit</button>
                     <DeleteButton
                       address={parent.concat(menuitem.link)}
                       delete={this.delete}

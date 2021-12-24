@@ -231,6 +231,7 @@ class Editor extends React.Component {
     }
   };
   setTableStyle=(props,id)=>{
+    console.log("setting table grid");
     var element = document.getElementById("item"+id);
     if (element && props) {
       element.style.display="grid";
@@ -290,7 +291,7 @@ class Editor extends React.Component {
                         </div>
                     })
                   :null}
-                  {this.setTableStyle(item.props,item.id)}
+                  {/* {this.setTableStyle(item.props,item.id)} */}
                   </>
                 ),
                 imageGallery:(

@@ -7,6 +7,9 @@
     border-bottom: 2px black solid;
     width: 100%;
 }
+.link{
+    display: block;
+}
 .table{
     display: grid;
     gap: 10px;
