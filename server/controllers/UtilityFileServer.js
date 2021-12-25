@@ -9,7 +9,7 @@ function getMenuMarkup(docs) {
 	htm += "<ul class='menu'>"
 	docs.forEach(l0 => {
 		if (l0.type === "page") {
-			htm += "<li><a href='" + l0.link + "'>" + l0.name + "</a></li>"
+			htm += "<li><a href='/" + l0.link + "'>" + l0.name + "</a></li>"
 		} else if (l0.type === "menu") {
 			htm += "<li class='dropdown'>"
 			htm += "<a href='#'>" + l0.name + "</a>"

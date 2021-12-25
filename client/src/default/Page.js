@@ -18,22 +18,21 @@ class Page extends React.Component{
         markup:[],
        }
     componentDidMount(){
-        axios.get(baseurl+'page'+window.location.pathname).then(
+      var page=window.location.pathname;
+      // console.log(page);
+        axios.get(baseurl+'page'+page).then(
             res=>{
                 console.log("response header recieved");
                 this.setState({markup : res.data},()=>{this.render();});
             }
         ).catch(
             (err)=>{
-              this.setState({
-                markup:[{"id": "divaf1b1c644c2089ac","type": "div","props": {"css": {"width": "100%"},"children": [{"id": "paragraph81acedefb2bcb641","type": "paragraph","props": {"children": "Error : 404"}},{"id": "paragraphb6411acedef8b2bc","type": "paragraph","props": {"children": "Page Not Found"}},{"id": "link81acedefb2bcb641","type": "link","props": {"href": "/","children": "Go To Home"}}]}}]
-              })
                 console.log(err.message);
             }
         );
     }
     display=(file)=>{
-        console.log(file);
+        // console.log(file);
         if(!file || !Array.isArray(file) || file.length===0) return null;
         return file.map((item,index)=>{
           return {
