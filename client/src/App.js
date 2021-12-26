@@ -10,8 +10,8 @@ function App() {
         <Header/>
         {console.log(window.location.href)}
         <Menu/>
-        <div style={{width:"100%",display:"inline-block",padding:"10px"}}>
-          <div style={{width:"60%",display:"inline-block",}}><Page/></div>
+        <div style={{display:"flex",flexWrap:"wrap",padding:"10px",minHeight:"calc(100vh - 150px - 40px - 300px)"}}>
+          <div style={{width:"60%"}}><Page/></div>
           <Notifications/>
         </div>
         <Footer/>

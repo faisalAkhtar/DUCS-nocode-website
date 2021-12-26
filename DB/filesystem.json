@@ -8,31 +8,31 @@
         "items": [
             {
                 "type": "page",
-                "link": "hod",
                 "name": "HOD Message",
                 "order": 1,
-                "draft": false
+                "draft": false,
+                "link": "hod"
             },
             {
                 "type": "page",
-                "link": "faculty",
                 "name": "Faculty",
                 "order": 2,
-                "draft": false
+                "draft": false,
+                "link": "faculty"
             },
             {
                 "type": "page",
-                "link": "staff",
                 "name": "Staff",
                 "order": 3,
-                "draft": false
+                "draft": false,
+                "link": "staff"
             },
             {
                 "type": "page",
-                "link": "infra",
                 "name": "Infrastructure",
                 "order": 4,
-                "draft": false
+                "draft": false,
+                "link": "infrastructure"
             }
         ]
     },
@@ -68,7 +68,7 @@
     },
     {
         "type": "menu",
-        "link": "exams",
+        "link": "examinations",
         "name": "Examination",
         "order": 3,
         "permission": [],
@@ -110,8 +110,8 @@
                     },
                     {
                         "type": "page",
-                        "link": "june2020",
-                        "name": "June 2020",
+                        "link": "dec2021",
+                        "name": "Dec 2021",
                         "order": 2,
                         "draft": false
                     }
@@ -153,29 +153,95 @@
                 "name": "B.Sc. (H) Computer Science",
                 "order": 4,
                 "draft": false
+            }
+        ]
+    },
+    {
+        "type": "menu",
+        "link": "students",
+        "name": "Students",
+        "order": 5,
+        "permission": [],
+        "items": [
+            {
+                "type": "page",
+                "link": "notice_board",
+                "name": "Notice Board",
+                "order": 1,
+                "draft": false
             },
             {
                 "type": "page",
-                "link": "ug-syllabi",
-                "name": "UG Programmes Syllabi",
+                "link": "scholarships",
+                "name": "Scholarships",
+                "order": 2,
+                "draft": false
+            },
+            {
+                "type": "page",
+                "link": "mentors",
+                "name": "Mentors",
+                "order": 3,
+                "draft": false
+            },
+            {
+                "type": "page",
+                "link": "spoken-tuts",
+                "name": "Spoken Tutorial",
+                "order": 4,
+                "draft": false
+            },
+            {
+                "type": "page",
+                "link": "ducs-coding-club",
+                "name": "DUCS Coding Club",
                 "order": 5,
                 "draft": false
             },
             {
                 "type": "page",
-                "link": "guidelines",
-                "name": "Guidelines",
+                "link": "alumni",
+                "name": "Alumni",
                 "order": 6,
                 "draft": false
+            },
+            {
+                "type": "page",
+                "link": "achivement_form",
+                "name": "Student Achievement Form",
+                "order": 7,
+                "draft": false
+            },
+            {
+                "type": "menu",
+                "link": "placements",
+                "name": "Placements",
+                "order": 8,
+                "permission": [],
+                "items": [
+                    {
+                        "type": "page",
+                        "link": "team",
+                        "name": "Team",
+                        "order": 1,
+                        "draft": false
+                    },
+                    {
+                        "type": "page",
+                        "link": "brochure",
+                        "name": "Placement Brochure",
+                        "order": 2,
+                        "draft": false
+                    },
+                    {
+                        "type": "page",
+                        "link": "recruiters",
+                        "name": "Our Recruiters",
+                        "order": 3,
+                        "draft": false
+                    }
+                ]
             }
         ]
-    },
-    {
-        "type": "page",
-        "link": "contact-us",
-        "name": "Contact Us",
-        "order": 5,
-        "permission": [],
-        "draft": false
     }
 ]
